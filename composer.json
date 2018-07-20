@@ -1,0 +1,56 @@
+{
+  "name": "rollun-com/rollun-megaplan-api",
+  "description": "Rollun megaplan api lib",
+  "type": "project",
+  "homepage": "https://github.com/rollun-com/rollun-megaplan-api",
+  "license": "BSD-3-Clause",
+  "config": {
+    "sort-packages": true
+  },
+  "require": {
+    "php": "^7.0",
+    "http-interop/http-middleware": "0.4.1",
+    "megaplan/simple_client": "^1.0.0",
+    "rollun-com/rollun-datastore": "^5.0",
+    "zendframework/zend-serializer": "^2.9",
+    "zendframework/zend-servicemanager": "^3.3",
+    "zendframework/zend-stdlib": "^3.1"
+  },
+  "require-dev": {
+    "mockery/mockery": "^1.1",
+    "zendframework/zend-component-installer": "^1.0",
+    "zendframework/zend-config-aggregator": "^1.0",
+    "phpunit/phpunit": "^6.0.8",
+    "squizlabs/php_codesniffer": "^2.8.1",
+    "zfcampus/zf-development-mode": "^3.1",
+    "filp/whoops": "^2.1.7"
+  },
+  "autoload": {
+    "psr-4": {
+      "rollun\\api\\megaplan\\": "src/Megaplan/src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "rollun\\test\\api\\megaplan\\": "test/Megaplan/"
+    }
+  },
+  "scripts": {
+    "post-create-project-cmd": [
+      "@development-enable"
+    ],
+    "development-disable": "zf-development-mode disable",
+    "development-enable": "zf-development-mode enable",
+    "development-status": "zf-development-mode status",
+    "check": [
+      "@cs-check",
+      "@test"
+    ],
+    "clear-config-cache": "php bin/clear-config-cache.php",
+    "cs-check": "phpcs",
+    "cs-fix": "phpcbf",
+    "serve": "php -S 0.0.0.0:8080 -t public public/index.php",
+    "test": "phpunit --colors=always",
+    "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
+  }
+}
