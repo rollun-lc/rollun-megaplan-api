@@ -53,7 +53,11 @@ class ConfigProvider
             'abstract_factories' => [
                 MegaplanAbstractFactory::class,
             ],
-            'aliases' => [],
+            'aliases' => [
+            	"megaplanClient" => Client::class,
+				'serializer' => MegaplanSerializer::class,
+				'options' => MegaplanSerializerOptions::class,
+			],
             'shared' => [
                 'serializer' => false,
                 'options' => false,
