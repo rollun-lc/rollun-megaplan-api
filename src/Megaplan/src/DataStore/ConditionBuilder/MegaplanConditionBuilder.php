@@ -24,10 +24,17 @@ class MegaplanConditionBuilder extends ConditionBuilderAbstract
         ]
     ];
 
+    /**
+     * @var array 
+     */
     protected $illegalFieldNames = [
         'Id',
     ];
 
+    /**
+     * @param $value
+     * @return mixed
+     */
     public static function encodeString($value)
     {
         /*
@@ -37,11 +44,20 @@ class MegaplanConditionBuilder extends ConditionBuilderAbstract
         return $value;
     }
 
+    /**
+     * @param AbstractQueryNode|null $rootQueryNode
+     * @return mixed|string
+     */
     public function __invoke(AbstractQueryNode $rootQueryNode = null)
     {
         return json_decode(parent::__invoke($rootQueryNode), true);
     }
 
+    /**
+     * @param string $fieldName
+     * @return string
+     * @throws InvalidArgumentException
+     */
     public function prepareFieldName($fieldName)
     {
         if (in_array($fieldName, $this->illegalFieldNames)) {
