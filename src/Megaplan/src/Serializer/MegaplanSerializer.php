@@ -6,15 +6,19 @@ use rollun\api\megaplan\Exception\RuntimeException;
 use rollun\dic\InsideConstruct;
 use Zend\Serializer\Adapter\Json;
 
+/**
+ * Class MegaplanSerializer
+ * @package rollun\api\megaplan\Serializer
+ * @property MegaplanSerializerOptionsInterface $options
+ */
 class MegaplanSerializer extends Json
 {
     /**
      * MegaplanSerializer constructor.
-     * @param null $options
+     * @param MegaplanSerializerOptionsInterface $options
      */
-    public function __construct($options = null)
+    public function __construct(MegaplanSerializerOptionsInterface $options = null)
     {
-        InsideConstruct::init();
         parent::__construct($this->options);
     }
 
@@ -80,8 +84,9 @@ class MegaplanSerializer extends Json
         if ('error' == $unserializedData['status']['code']) {
             throw new RuntimeException($unserializedData['status']["message"]);
         }
-
-        $rawUnserializedData = $unserializedData["data"][$this->options->getEntity()];
+        $rawUnserializedData = $this->options->getEntity() ?
+            $unserializedData["data"][$this->options->getEntity()] :
+            current($unserializedData["data"]);
         return $rawUnserializedData;
     }
 }

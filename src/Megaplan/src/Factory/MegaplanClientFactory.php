@@ -1,8 +1,9 @@
 <?php
 
-namespace rollun\api\megaplan\Entity\Factory;
+namespace rollun\api\megaplan\Factory;
 
 use Interop\Container\ContainerInterface;
+use rollun\api\megaplan\MegaplanClient;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Megaplan\SimpleClient\Client;
@@ -10,9 +11,12 @@ use Megaplan\SimpleClient\Client;
 class MegaplanClientFactory implements FactoryInterface
 {
     const KEY = 'megaplan';
-    const API_URL_KEY = 'api_url';
-    const API_LOGIN_KEY = 'login';
-    const API_PASSWORD_KEY = 'password';
+
+    const KEY_API_URL = 'api_url';
+    const KEY_API_LOGIN = 'login';
+    const KEY_API_PASSWORD = 'password';
+
+    const KEY_SERIALIZER = "serializer";
 
     /**
      * {@inheritdoc}
@@ -30,21 +34,22 @@ class MegaplanClientFactory implements FactoryInterface
 
         $serviceConfig = $config[static::KEY];
         // Required megaplan connection params are expected
-        if (!(isset($serviceConfig[static::API_URL_KEY]) &&
-            isset($serviceConfig[static::API_LOGIN_KEY]) &&
-            isset($serviceConfig[static::API_PASSWORD_KEY])
+        if (!(isset($serviceConfig[static::KEY_API_URL]) &&
+            isset($serviceConfig[static::KEY_API_LOGIN]) &&
+            isset($serviceConfig[static::KEY_API_PASSWORD])
         )) {
             throw new ServiceNotFoundException(
                 sprintf("Can't create a service because there is no required data - \"%s\", \"%s\", \"%s\" - in the config.",
-                    static::API_URL_KEY, static::API_LOGIN_KEY, static::API_PASSWORD_KEY)
+                    static::KEY_API_URL, static::KEY_API_LOGIN, static::KEY_API_PASSWORD)
             );
         }
 
-        $instance = new Client($serviceConfig[static::API_URL_KEY]);
+        $instance = new Client($serviceConfig[static::KEY_API_URL]);
         // If both login and password are empty skip an authorization
-        if (!(empty($serviceConfig[static::API_LOGIN_KEY]) && empty($serviceConfig[static::API_PASSWORD_KEY]))) {
-            $instance->auth($serviceConfig[static::API_LOGIN_KEY], $serviceConfig[static::API_PASSWORD_KEY]);
+        if (!(empty($serviceConfig[static::KEY_API_LOGIN]) && empty($serviceConfig[static::KEY_API_PASSWORD]))) {
+            $instance->auth($serviceConfig[static::KEY_API_LOGIN], $serviceConfig[static::KEY_API_PASSWORD]);
         }
-        return $instance;
+        $serializer = $container->get(static::KEY_SERIALIZER);
+        return new MegaplanClient($instance, $serializer);
     }
 }

@@ -1,8 +1,9 @@
 <?php
 
+
 namespace rollun\api\megaplan\Exception;
 
-class RuntimeException extends \Exception
+class ClientException extends \RuntimeException
 {
 
 }

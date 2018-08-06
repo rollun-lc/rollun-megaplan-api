@@ -9,6 +9,7 @@
   },
   "require": {
     "php": "^7.0",
+    "ext-json": "*",
     "http-interop/http-middleware": "0.4.1",
     "megaplan/simple_client": "^1.0.0",
     "rollun-com/rollun-datastore": "^5.0",

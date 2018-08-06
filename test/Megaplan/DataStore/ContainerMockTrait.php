@@ -24,7 +24,7 @@ trait ContainerMockTrait
                 $this->serviceName => [
                     'singleEntity' => 'dealEntity',
                     'listEntity' => 'dealsEntity',
-                    'class' => \rollun\api\megaplan\DataStore\MegaplanDataStore::class,
+                    'class' => \rollun\api\megaplan\DataStore\ARMegaplanDataStore::class,
                 ],
             ],
         ];

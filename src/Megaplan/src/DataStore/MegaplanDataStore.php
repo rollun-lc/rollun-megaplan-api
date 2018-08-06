@@ -1,102 +1,112 @@
 <?php
 
+
 namespace rollun\api\megaplan\DataStore;
 
-use rollun\api\megaplan\DataStore\ConditionBuilder\MegaplanConditionBuilder;
-use rollun\api\megaplan\Entity\EntityAbstract;
-use rollun\api\megaplan\Entity\ListEntityAbstract;
-use rollun\api\megaplan\Entity\SingleEntityAbstract;
-use rollun\datastore\DataStore\DataStoreAbstract;
+use rollun\api\megaplan\Command\AbstractMegaplanCommand;
+use rollun\api\megaplan\Command\Builder\CommandBuilderInterface;
+use rollun\api\megaplan\Command\CreateEntityMegaplanCommand;
+use rollun\api\megaplan\Command\UpdateEntityMegaplanCommand;
+use rollun\api\megaplan\Exception\InvalidCommandType;
 use rollun\datastore\DataStore\DataStoreException;
-use rollun\datastore\DataStore\Interfaces\DataSourceInterface;
-use Xiag\Rql\Parser\Query;
+use rollun\datastore\DataStore\Interfaces\DataStoresInterface;
+use rollun\datastore\DataStore\Traits\NoSupportDeleteAllTrait;
+use rollun\datastore\DataStore\Traits\NoSupportDeleteTrait;
 
 /**
  * Class MegaplanDataStore
  * @package rollun\api\megaplan\DataStore
  */
-class MegaplanDataStore extends DataStoreAbstract implements DataSourceInterface
+class MegaplanDataStore extends MegaplanReadStore implements DataStoresInterface
 {
-    const DEF_ID = 'Id';
+    use NoSupportDeleteAllTrait;
+    use NoSupportDeleteTrait;
 
-    /** @var SingleEntityAbstract */
-    protected $singleEntity;
-
-    /** @var ListEntityAbstract */
-    protected $listEntity;
+    private $changeEntityUri;
 
     /**
-     * TODO: fixed received entity type in __constructor.
      * MegaplanDataStore constructor.
-     * @param SingleEntityAbstract $singleEntity
-     * @param ListEntityAbstract $listEntity
+     * @param CommandBuilderInterface $megaplanCommandBuilder
+     * @param MegaplanEntityFieldsDataSource $entityFieldsDataSource
+     * @param string $programId
+     * @param string $getEntityUri
+     * @param string $getEntitiesUri
+     * @param string $changeEntityUri
      */
-    public function __construct(SingleEntityAbstract $singleEntity, ListEntityAbstract $listEntity)
+    public function __construct(
+        CommandBuilderInterface $megaplanCommandBuilder,
+        MegaplanEntityFieldsDataSource $entityFieldsDataSource,
+        string $programId,
+        string $getEntityUri,
+        string $getEntitiesUri,
+        string $changeEntityUri
+    )
     {
-        $this->singleEntity = $singleEntity;
-        $this->listEntity = $listEntity;
-        $this->conditionBuilder = new MegaplanConditionBuilder();
+        parent::__construct($megaplanCommandBuilder, $entityFieldsDataSource, $programId, $getEntityUri, $getEntitiesUri);
+        $this->changeEntityUri = $changeEntityUri;
     }
 
     /**
-     * {@inheritdoc}
+     * By default, insert new (by create) Item.
      *
-     * {@inheritdoc}
-     */
-    public function read($id)
-    {
-        $this->singleEntity->setId($id);
-        return $this->singleEntity->get();
-    }
-
-    /**
-     * {@inheritdoc}
+     * It can't overwrite existing item by default.
+     * You can get creatad item us result this function.
      *
-     * {@inheritdoc}
-     */
-    public function getAll()
-    {
-        return $this->listEntity->get();
-    }
-
-    /**
-     * {@inheritdoc}
-     * {@inheritdoc}
-     */
-    public function query(Query $query)
-    {
-        // TODO: not all listEntity support query method. Add check
-        $condition = $this->conditionBuilder->__invoke($query->getQuery());
-        return $this->listEntity->query($condition);
-    }
-
-    /**
-     * {@inheritdoc}
+     * If  $itemData["id"] !== null, item set with that 'id'.
+     * If item with same 'id' already exist - method will throw exception,
+     * but if $rewriteIfExist = true item will be rewrited.<br>
      *
-     * {@inheritdoc}
+     * If $itemData["id"] is not set or $itemData["id"]===null,
+     * item will be insert with autoincrement PrimryKey.<br>
+     *
+     * @param array $itemData associated array with or without PrimaryKey ["id" => 1, "field name" = "foo" ]
+     * @param bool $rewriteIfExist can item be rewrited if same 'id' exist
+     * @return array created item or method will throw exception
      */
     public function create($itemData, $rewriteIfExist = false)
     {
-        return $this->singleEntity->create($itemData, $rewriteIfExist);
+        try {
+            $itemData[CreateEntityMegaplanCommand::KEY_PROGRAM_ID] = $this->programId;
+            $command = $this->megaplanCommandBuilder->build(
+                CreateEntityMegaplanCommand::class,
+                $this->changeEntityUri,
+                $itemData
+            );
+            return $command->execute();
+        } catch (InvalidCommandType $e) {
+            throw new DataStoreException("Buy create entity get exception - {$e->getMessage()}", $e->getCode(), $e);
+        }
     }
 
     /**
-     * {@inheritdoc}
+     * By default, update existing Item.
      *
-     * {@inheritdoc}
+     * If item with PrimaryKey == $itemData["id"] is existing in the store, item will update.
+     * A fields wich don't present in $itemData will  not be changed in item in the store.<br>
+     * This method return updated item<br>
+     * <br>
+     * If $item["id"] isn't set - the method will throw exception.<br>
+     * <br>
+     * If item with PrimaryKey == $itemData["id"] is absent in the store - method  will throw exception,<br>
+     * but if $createIfAbsent = true item will be created and this method return inserted item<br>
+     * <br>
+     *
+     * @param array $itemData associated array with PrimaryKey ["id" => 1, "field name" = "foo" ]
+     * @param bool $createIfAbsent can item be created if same 'id' is absent in the store
+     * @return array updated or inserted item.
      */
     public function update($itemData, $createIfAbsent = false)
     {
-        return $this->singleEntity->update($itemData, $createIfAbsent);
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * {@inheritdoc}
-     */
-    public function delete($id)
-    {
-        throw new DataStoreException("This functionality is not implemented yet");
+        try {
+            $itemData[CreateEntityMegaplanCommand::KEY_PROGRAM_ID] = $this->programId;
+            $command = $this->megaplanCommandBuilder->build(
+                UpdateEntityMegaplanCommand::class,
+                $this->changeEntityUri,
+                $itemData
+            );
+            return $command->execute();
+        } catch (InvalidCommandType $e) {
+            throw new DataStoreException("Buy update entity get exception - {$e->getMessage()}", $e->getCode(), $e);
+        }
     }
 }

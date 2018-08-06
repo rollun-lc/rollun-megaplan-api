@@ -14,9 +14,6 @@ class MegaplanSerializerOptions extends JsonOptions implements MegaplanSerialize
      */
     public function getEntity()
     {
-        if (is_null($this->entity)) {
-            throw new InvalidArgumentException("Required option \"entity\" for Megaplan serializer is not set.");
-        }
         return $this->entity;
     }
 

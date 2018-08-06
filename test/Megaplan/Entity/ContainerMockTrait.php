@@ -33,7 +33,7 @@ trait ContainerMockTrait
             'megaplan_deal_dataStore_service' => [
                 'singleEntity' => 'dealEntity',
                 'listEntity' => 'dealsEntity',
-                'class' => \rollun\api\megaplan\DataStore\MegaplanDataStore::class,
+                'class' => \rollun\api\megaplan\DataStore\ARMegaplanDataStore::class,
             ],
         ],
     ];
