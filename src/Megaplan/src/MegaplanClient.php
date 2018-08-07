@@ -7,7 +7,7 @@ namespace rollun\api\megaplan;
 use Megaplan\SimpleClient\Client;
 use rollun\api\megaplan\Exception\ClientException;
 use rollun\api\megaplan\Serializer\MegaplanSerializerOptionsInterface;
-use Zend\Serializer\Serializer;
+use Zend\Serializer\Adapter\AdapterInterface;
 
 /**
  * Class MegaplanClient
@@ -21,16 +21,16 @@ class MegaplanClient
     private $client;
 
     /**
-     * @var Serializer
+     * @var AdapterInterface
      */
     private $serializer;
 
     /**
      * MegaplanClient constructor.
      * @param Client $client
-     * @param Serializer $serializer
+     * @param AdapterInterface $serializer
      */
-    public function __construct(Client $client, Serializer $serializer)
+    public function __construct(Client $client, AdapterInterface $serializer)
     {
         $this->client = $client;
         $this->serializer = $serializer;

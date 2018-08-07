@@ -4,6 +4,7 @@ namespace rollun\api\megaplan\Factory;
 
 use Interop\Container\ContainerInterface;
 use rollun\api\megaplan\MegaplanClient;
+use rollun\api\megaplan\Serializer\MegaplanSerializer;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Megaplan\SimpleClient\Client;
@@ -49,7 +50,7 @@ class MegaplanClientFactory implements FactoryInterface
         if (!(empty($serviceConfig[static::KEY_API_LOGIN]) && empty($serviceConfig[static::KEY_API_PASSWORD]))) {
             $instance->auth($serviceConfig[static::KEY_API_LOGIN], $serviceConfig[static::KEY_API_PASSWORD]);
         }
-        $serializer = $container->get(static::KEY_SERIALIZER);
+        $serializer = $container->get($serviceConfig[static::KEY_SERIALIZER] ?? MegaplanSerializer::class);
         return new MegaplanClient($instance, $serializer);
     }
 }

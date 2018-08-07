@@ -4,6 +4,7 @@
 namespace rollun\api\megaplan\DataStore;
 
 
+use rollun\api\megaplan\Command\AbstractMegaplanCommand;
 use rollun\api\megaplan\Command\Builder\CommandBuilderInterface;
 use rollun\api\megaplan\Command\RequestEntitiesMegaplanCommand;
 use rollun\datastore\DataStore\Interfaces\DataSourceInterface;
@@ -69,6 +70,9 @@ class MegaplanEntityFieldsDataSource implements DataSourceInterface
             $this->fields = array_map(function ($field) {
                 return $field["Name"];
             }, $this->requestFields());
+            //nor return by megaplan but need
+            $this->fields[] = AbstractMegaplanCommand::KEY_ID;
+            $this->fields[] = AbstractMegaplanCommand::KEY_GUID;
         }
         return $this->fields;
     }

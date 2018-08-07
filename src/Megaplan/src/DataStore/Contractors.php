@@ -4,7 +4,7 @@
 namespace rollun\api\megaplan\DataStore;
 
 
-class Contractor extends AbstractMegaplanEntity
+class Contractors extends AbstractMegaplanEntity
 {
     /**
      *

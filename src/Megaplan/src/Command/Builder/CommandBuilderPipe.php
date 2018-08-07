@@ -21,7 +21,7 @@ class CommandBuilderPipe implements CommandBuilderInterface
      */
     public function __construct(array $commandBuilders)
     {
-        foreach ($this->commandBuilders as $commandBuilder) {
+        foreach ($commandBuilders as $commandBuilder) {
             if(!$commandBuilder instanceof CommandBuilderInterface) {
                 throw new \InvalidArgumentException(
                     "Array must contains only " . CommandBuilderInterface::class . " objects, instead " . gettype($commandBuilders));
@@ -40,7 +40,7 @@ class CommandBuilderPipe implements CommandBuilderInterface
     {
         foreach ($this->commandBuilders as $commandBuilder) {
             if($commandBuilder->canBuild($commandType)) {
-                return $commandBuilder->build($commandType, $args);
+                return $commandBuilder->build($commandType, ...$args);
             }
         }
         throw new \InvalidArgumentException("Command $commandType not valid.");

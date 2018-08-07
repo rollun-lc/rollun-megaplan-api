@@ -6,8 +6,8 @@ namespace rollun\api\megaplan;
 
 use rollun\api\megaplan\Command\Builder\CommandBuilderPipe;
 use rollun\api\megaplan\Command\Builder\RequestByQueryMegaplanCommandBuilder;
-use rollun\api\megaplan\Command\MegaplanCommandBuilderAbstract;
-use rollun\api\megaplan\DataStore\Contractor;
+use rollun\api\megaplan\Command\Builder\MegaplanCommandBuilderAbstract;
+use rollun\api\megaplan\DataStore\Contractors;
 use rollun\api\megaplan\DataStore\Deals;
 use rollun\api\megaplan\DataStore\Factory\MegaplanAbstractFactory;
 use rollun\api\megaplan\Factory\MegaplanClientFactory;
@@ -45,12 +45,12 @@ class ConfigProvider
     public function getDataStore()
     {
         return [
-            "Deals" => [
+            "Deals-13" => [
                 MegaplanAbstractFactory::KEY_CLASS => Deals::class,
                 MegaplanAbstractFactory::KEY_MEGAPLAN_COMMAND_BUILDER => "MegaplanCommandBuilder",
             ],
-            "Contractor" => [
-                MegaplanAbstractFactory::KEY_CLASS => Contractor::class,
+            "Contractor-13" => [
+                MegaplanAbstractFactory::KEY_CLASS => Contractors::class,
                 MegaplanAbstractFactory::KEY_MEGAPLAN_COMMAND_BUILDER => "MegaplanCommandBuilder",
             ],
         ];

@@ -3,7 +3,6 @@
 
 namespace rollun\api\megaplan\Command\Builder;
 
-
 use rollun\api\megaplan\Command\CommandInterface;
 use rollun\api\megaplan\Command\RequestEntitiesMegaplanCommand;
 use rollun\api\megaplan\DataStore\ConditionBuilder\MegaplanConditionBuilder;
@@ -42,19 +41,19 @@ class RequestByQueryMegaplanCommandBuilder extends AbstractMegaplanCommandBuilde
         if(!$this->canBuild($commandType)) {
             throw new \InvalidArgumentException("Command $commandType not valid.");
         }
-        $uri = array_pop($args);
-        if(!$uri) {
-            throw new \InvalidArgumentException("Uri not set.");
+
+        $query  = array_pop($args);
+        if(!$query || !$query instanceof Query) {
+            throw new \InvalidArgumentException("query not set or not valid.");
         }
         $entityFieldsDataSource = array_pop($args);
         if(!$entityFieldsDataSource || !$entityFieldsDataSource instanceof MegaplanEntityFieldsDataSource) {
             throw new \InvalidArgumentException("entityFieldsDataSource not set or not valid.");
         }
-        $query  = array_pop($args);
-        if(!$query || !$query instanceof Query) {
-            throw new \InvalidArgumentException("query not set or not valid.");
+        $uri = array_pop($args);
+        if(!$uri) {
+            throw new \InvalidArgumentException("Uri not set.");
         }
-
 
         $requestParam["FilterFields"] = (array)$this->megaplanConditionBuilder->__invoke($query->getQuery());
 
@@ -75,7 +74,6 @@ class RequestByQueryMegaplanCommandBuilder extends AbstractMegaplanCommandBuilde
                 }
             }
         } else {
-            $requestParam["RequestedFields"] = $entityFieldsDataSource->getFields();;
             $requestParam["ExtraFields"] = $entityFieldsDataSource->getExtraFields();;
         }
 

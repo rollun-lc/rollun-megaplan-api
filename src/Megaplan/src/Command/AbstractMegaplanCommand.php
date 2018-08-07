@@ -17,6 +17,8 @@ abstract class AbstractMegaplanCommand implements CommandInterface
 
     const KEY_PROGRAM_ID = "ProgramId";
 
+    const KEY_GUID = "GUID";
+
     /**
      * @var MegaplanClient
      */

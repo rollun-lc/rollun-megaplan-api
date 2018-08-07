@@ -2,8 +2,8 @@
 
 namespace rollun\api\megaplan\Serializer;
 
-use rollun\api\megaplan\Exception\RuntimeException;
 use rollun\dic\InsideConstruct;
+use RuntimeException;
 use Zend\Serializer\Adapter\Json;
 
 /**
@@ -84,9 +84,7 @@ class MegaplanSerializer extends Json
         if ('error' == $unserializedData['status']['code']) {
             throw new RuntimeException($unserializedData['status']["message"]);
         }
-        $rawUnserializedData = $this->options->getEntity() ?
-            $unserializedData["data"][$this->options->getEntity()] :
-            current($unserializedData["data"]);
+        $rawUnserializedData = current($unserializedData["data"]);
         return $rawUnserializedData;
     }
 }

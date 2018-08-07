@@ -41,6 +41,8 @@ class RequestEntitiesMegaplanCommand extends AbstractMegaplanCommand
         'FilterFields' => [],
         'RequestedFields' => [],
         'ExtraFields' => [],
+        'Limit' => self::MAX_LIMIT,
+        'Offset' => 0,
     ];
 
     /**
@@ -63,10 +65,11 @@ class RequestEntitiesMegaplanCommand extends AbstractMegaplanCommand
     {
         $data = [];
         $requestCount = 0;
-        $limit = $this->requestParams["Limit"] ?? static::MAX_LIMIT;
+        $limit = $this->requestParams["Limit"];
         $this->requestParams["Limit"] = $limit > static::MAX_LIMIT ? static::MAX_LIMIT : $limit;
         do {
-            $data = array_merge($data, $this->megaplanClient->get($this->uri, $this->getRequestParams()));
+            $partData = $this->megaplanClient->get($this->uri, $this->getRequestParams());
+            $data = array_merge($data, $partData);
 
             // check if the limit is exceeded
             $requestCount++;
@@ -81,7 +84,7 @@ class RequestEntitiesMegaplanCommand extends AbstractMegaplanCommand
             // do this while the last part of entities is less than 100 - in this case we reach end of the entities list
             //count($data) < ($limit)$this->requestParams['Limit']
             //count($data) == $this->requestParams['Offset']
-        } while (count($data) < $limit);
+        } while (count($data) < $limit && count($partData) == $this->requestParams["Limit"]);
         $this->reset();
         return $data;
     }

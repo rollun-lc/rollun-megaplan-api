@@ -44,11 +44,12 @@ abstract class AbstractMegaplanEntity extends MegaplanDataStore
         $entityFieldsDataSource = new MegaplanEntityFieldsDataSource(
             $megaplanCommandBuilder,
             static::GET_FIELDS_URI,
-            $this->programId
+            $programId
         );
         parent::__construct(
             $megaplanCommandBuilder,
-            $entityFieldsDataSource, $programId,
+            $entityFieldsDataSource,
+            $programId,
             static::GET_ENTITY_URI,
             static::GET_ENTITIES_URI,
             static::CHANGE_ENTITY_URI);

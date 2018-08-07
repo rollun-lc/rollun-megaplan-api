@@ -165,7 +165,7 @@ class MegaplanReadStore implements ReadInterface
             $command = $this->megaplanCommandBuilder
                 ->build(
                     RequestByQueryMegaplanCommandBuilder::COMMAND_TYPE,
-                    $this->getEntityUri,
+                    $this->getEntitiesUri,
                     $this->entityFieldsDataSource,
                     $query
                 );

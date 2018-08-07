@@ -1,12 +1,10 @@
 <?php
 
 
-namespace rollun\api\megaplan\Command;
+namespace rollun\api\megaplan\Command\Builder;
 
-
-use rollun\api\megaplan\Command\Builder\AbstractMegaplanCommandBuilder;
-use rollun\api\megaplan\Command\Builder\CommandBuilderInterface;
-use rollun\api\megaplan\MegaplanClient;
+use rollun\api\megaplan\Command\AbstractMegaplanCommand;
+use rollun\api\megaplan\Command\CommandInterface;
 
 /**
  * Build megaplan command
