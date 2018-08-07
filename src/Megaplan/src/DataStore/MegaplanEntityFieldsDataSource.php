@@ -49,7 +49,8 @@ class MegaplanEntityFieldsDataSource implements DataSourceInterface
      * @return mixed
      * @throws \rollun\api\megaplan\Exception\InvalidCommandType
      */
-    private function requestFields() {
+    private function requestFields()
+    {
         $command = $this->commandBuilder->build(
             RequestEntitiesMegaplanCommand::class,
             $this->listFieldsUri,
@@ -61,12 +62,30 @@ class MegaplanEntityFieldsDataSource implements DataSourceInterface
     }
 
     /**
+     * @param $fieldName
+     * @return
+     * @throws \rollun\api\megaplan\Exception\InvalidCommandType
+     */
+    public function warpField($fieldName)
+    {
+        $fields = preg_grep('/(?<groupName>[a-zA-Z]+)(?<num>[\d]+)CustomField(?<name>' . $fieldName . ')/', $this->getExtraFields());
+        if (empty($fields)) {
+            return $fieldName;
+        } elseif (count($fields) == 1) {
+            $field = current($fields);
+            return $field;
+        } else {
+            throw new \RuntimeException("Get more unique fields.");
+        }
+    }
+
+    /**
      * @return array Return data of DataSource
      * @throws \rollun\api\megaplan\Exception\InvalidCommandType
      */
     public function getAll()
     {
-        if(empty($this->fields)) {
+        if (empty($this->fields)) {
             $this->fields = array_map(function ($field) {
                 return $field["Name"];
             }, $this->requestFields());
@@ -101,7 +120,8 @@ class MegaplanEntityFieldsDataSource implements DataSourceInterface
      * @param $fieldName
      * @return false|int
      */
-    private function isExtraFiled($fieldName){
+    private function isExtraFiled($fieldName)
+    {
         return preg_match("/CustomField/", $fieldName);
     }
 
@@ -109,7 +129,8 @@ class MegaplanEntityFieldsDataSource implements DataSourceInterface
      * @param $fieldName
      * @return bool
      */
-    private function isFiled($fieldName){
+    private function isFiled($fieldName)
+    {
         return !$this->isExtraFiled($fieldName);
     }
 
@@ -118,7 +139,8 @@ class MegaplanEntityFieldsDataSource implements DataSourceInterface
      * @return array
      * @throws \rollun\api\megaplan\Exception\InvalidCommandType
      */
-    public function getExtraFields() {
+    public function getExtraFields()
+    {
         $fields = $this->getAll();
         return array_filter($fields, [$this, "isExtraFiled"]);
     }
@@ -128,7 +150,8 @@ class MegaplanEntityFieldsDataSource implements DataSourceInterface
      * @return array
      * @throws \rollun\api\megaplan\Exception\InvalidCommandType
      */
-    public function getFields() {
+    public function getFields()
+    {
         $fields = $this->getAll();
         return array_filter($fields, [$this, "isFiled"]);
     }

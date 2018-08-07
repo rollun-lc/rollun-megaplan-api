@@ -68,8 +68,8 @@ abstract class AbstractPutMegaplanCommand extends AbstractMegaplanCommand
     {
         $preparedItem = [];
         foreach ($itemData as $key => $value) {
-            $fields = preg_grep('/(?<groupName>[a-zA-Z]+)(?<num>[\d]+)(?<name>[\w\W]+)/', $this->getExtraFields());
-            if(empty($fields) > 1) {
+            $fields = preg_grep('/(?<groupName>[a-zA-Z]+)(?<num>[\d]+)CustomField(?<name>'.$key.')/', $this->getExtraFields());
+            if(empty($fields)) {
                 $preparedItem[$key] = $value;
             } elseif(count($fields) == 1) {
                 $field = current($fields);

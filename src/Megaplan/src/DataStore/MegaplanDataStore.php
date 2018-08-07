@@ -70,7 +70,8 @@ class MegaplanDataStore extends MegaplanReadStore implements DataStoresInterface
             $command = $this->megaplanCommandBuilder->build(
                 CreateEntityMegaplanCommand::class,
                 $this->changeEntityUri,
-                $itemData
+                $itemData,
+                $this->entityFieldsDataSource->getExtraFields()
             );
             return $command->execute();
         } catch (InvalidCommandType $e) {
@@ -102,7 +103,8 @@ class MegaplanDataStore extends MegaplanReadStore implements DataStoresInterface
             $command = $this->megaplanCommandBuilder->build(
                 UpdateEntityMegaplanCommand::class,
                 $this->changeEntityUri,
-                $itemData
+                $itemData,
+                $this->entityFieldsDataSource->getExtraFields()
             );
             return $command->execute();
         } catch (InvalidCommandType $e) {

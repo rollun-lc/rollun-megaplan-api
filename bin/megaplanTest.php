@@ -2,6 +2,13 @@
 
 use rollun\logger\LifeCycleToken;
 use Xiag\Rql\Parser\Node\LimitNode;
+use Xiag\Rql\Parser\Node\Query\LogicOperator\AndNode;
+use Xiag\Rql\Parser\Node\Query\ScalarOperator\EqNode;
+use Xiag\Rql\Parser\Node\Query\ScalarOperator\GeNode;
+use Xiag\Rql\Parser\Node\Query\ScalarOperator\GtNode;
+use Xiag\Rql\Parser\Node\Query\ScalarOperator\LeNode;
+use Xiag\Rql\Parser\Node\Query\ScalarOperator\LtNode;
+use Xiag\Rql\Parser\Node\Query\ScalarOperator\NeNode;
 
 chdir(dirname(__DIR__));
 require 'vendor/autoload.php';
@@ -18,6 +25,13 @@ $container->setService(LifeCycleToken::class, $lifeCycleToke);
 $dealsDataStore = $container->get("Deals-13");
 $query = new \Xiag\Rql\Parser\Query();
 $query->setLimit(new LimitNode(1));
+$query->setQuery(new AndNode([
+    new EqNode("IsPaid", "Да"),
+    new NeNode("Description", "Что то"),
+    new EqNode("OrderId", "4365768"),
+    new GeNode("DataZakaza", "2017-09-13"),
+    new EqNode("NomerZakazaUPostavshchika", "463758"),
+]));
 $result = $dealsDataStore->query($query);
 print_r($result);
 

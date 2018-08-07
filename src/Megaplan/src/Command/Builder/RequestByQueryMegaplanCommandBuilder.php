@@ -9,6 +9,11 @@ use rollun\api\megaplan\DataStore\ConditionBuilder\MegaplanConditionBuilder;
 use rollun\api\megaplan\DataStore\MegaplanEntityFieldsDataSource;
 use rollun\api\megaplan\Exception\InvalidCommandType;
 use rollun\api\megaplan\MegaplanClient;
+use Xiag\Rql\Parser\Node\AbstractQueryNode;
+use Xiag\Rql\Parser\Node\Query\AbstractLogicOperatorNode;
+use Xiag\Rql\Parser\Node\Query\AbstractScalarOperatorNode;
+use Xiag\Rql\Parser\Node\Query\LogicOperator\AndNode;
+use Xiag\Rql\Parser\Node\Query\ScalarOperator\NeNode;
 use Xiag\Rql\Parser\Query;
 
 class RequestByQueryMegaplanCommandBuilder extends AbstractMegaplanCommandBuilder
@@ -31,6 +36,24 @@ class RequestByQueryMegaplanCommandBuilder extends AbstractMegaplanCommandBuilde
     }
 
     /**
+     * @param AbstractQueryNode $query
+     * @param MegaplanEntityFieldsDataSource $entityFieldsDataSource
+     * @return AbstractQueryNode
+     * @throws InvalidCommandType
+     */
+    protected function rebuildQuery(AbstractQueryNode $query, MegaplanEntityFieldsDataSource $entityFieldsDataSource)
+    {
+        if($query instanceof AbstractScalarOperatorNode) {
+            $query->setField($entityFieldsDataSource->warpField($query->getField()));
+        }elseif($query instanceof AbstractLogicOperatorNode) {
+            foreach ($query->getQueries() as &$childQuery) {
+                $this->rebuildQuery($childQuery, $entityFieldsDataSource);
+            }
+        }
+        return $query;
+    }
+
+    /**
      * @param string $commandType
      * @param mixed ...$args
      * @return CommandInterface
@@ -38,23 +61,27 @@ class RequestByQueryMegaplanCommandBuilder extends AbstractMegaplanCommandBuilde
      */
     public function build(string $commandType, ...$args): CommandInterface
     {
-        if(!$this->canBuild($commandType)) {
+        if (!$this->canBuild($commandType)) {
             throw new \InvalidArgumentException("Command $commandType not valid.");
         }
 
-        $query  = array_pop($args);
-        if(!$query || !$query instanceof Query) {
+        $query = array_pop($args);
+        if (!$query || !$query instanceof Query) {
             throw new \InvalidArgumentException("query not set or not valid.");
         }
+
         $entityFieldsDataSource = array_pop($args);
-        if(!$entityFieldsDataSource || !$entityFieldsDataSource instanceof MegaplanEntityFieldsDataSource) {
+        if (!$entityFieldsDataSource || !$entityFieldsDataSource instanceof MegaplanEntityFieldsDataSource) {
             throw new \InvalidArgumentException("entityFieldsDataSource not set or not valid.");
         }
         $uri = array_pop($args);
-        if(!$uri) {
+        if (!$uri) {
             throw new \InvalidArgumentException("Uri not set.");
         }
 
+        if($query->getQuery()) {
+            $query->setQuery($this->rebuildQuery($query->getQuery(), $entityFieldsDataSource));
+        }
         $requestParam["FilterFields"] = (array)$this->megaplanConditionBuilder->__invoke($query->getQuery());
 
         if ($query->getLimit()) {
