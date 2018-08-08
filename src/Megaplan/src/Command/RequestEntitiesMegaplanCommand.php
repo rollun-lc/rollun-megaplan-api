@@ -86,7 +86,16 @@ class RequestEntitiesMegaplanCommand extends AbstractMegaplanCommand
             //count($data) == $this->requestParams['Offset']
         } while (count($data) < $limit && count($partData) == $this->requestParams["Limit"]);
         $this->reset();
-        return $data;
+        return array_map(function ($item) {
+            $unwarpItem = [];
+            foreach ($item as $key => $value) {
+                if(preg_match('/Category([\d]+)CustomField(?<field_name>[\w\d]+)$/', $key,$match)) {
+                    $key = $match["field_name"];
+                }
+                $unwarpItem[$key] = $value;
+            }
+            return $unwarpItem;
+        }, $data);
     }
 
 
