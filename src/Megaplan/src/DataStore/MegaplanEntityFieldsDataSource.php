@@ -68,7 +68,7 @@ class MegaplanEntityFieldsDataSource implements DataSourceInterface
      */
     public function warpField($fieldName)
     {
-        $fields = preg_grep('/(?<groupName>[a-zA-Z]+)(?<num>[\d]+)CustomField(?<name>' . $fieldName . ')/', $this->getExtraFields());
+        $fields = preg_grep('/^(?<groupName>[a-zA-Z]+)(?<num>[\d]+)CustomField(?<name>' . $fieldName . ')$/', $this->getExtraFields());
         if (empty($fields)) {
             return $fieldName;
         } elseif (count($fields) == 1) {
@@ -103,7 +103,7 @@ class MegaplanEntityFieldsDataSource implements DataSourceInterface
      */
     public function hasField($field)
     {
-        return isset($this->getFields()[$field]);
+        return in_array($field, $this->getFields());
     }
 
     /**
@@ -113,7 +113,7 @@ class MegaplanEntityFieldsDataSource implements DataSourceInterface
      */
     public function hasExtraField($field)
     {
-        return isset($this->getExtraFields()[$field]);
+        return in_array($field, $this->getExtraFields());
     }
 
     /**

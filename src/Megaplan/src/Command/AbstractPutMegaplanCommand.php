@@ -26,10 +26,10 @@ abstract class AbstractPutMegaplanCommand extends AbstractMegaplanCommand
     public function __construct(MegaplanClient $megaplanClient, string $uri, $itemData, array $extraFields = [])
     {
         parent::__construct($megaplanClient, $uri);
+        $this->extraFields = $extraFields;
         $itemData = $this->prepareDataStructure($itemData);
         $this->checkDataStructure($itemData);
         $this->itemData = $itemData;
-        $this->extraFields = $extraFields;
     }
 
     /**
