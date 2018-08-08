@@ -73,7 +73,8 @@ class MegaplanDataStore extends MegaplanReadStore implements DataStoresInterface
                 $itemData,
                 $this->entityFieldsDataSource->getExtraFields()
             );
-            return $command->execute();
+            $dealId = $command->execute();
+            return $this->read($dealId);
         } catch (InvalidCommandType $e) {
             throw new DataStoreException("Buy create entity get exception - {$e->getMessage()}", $e->getCode(), $e);
         }
@@ -106,7 +107,8 @@ class MegaplanDataStore extends MegaplanReadStore implements DataStoresInterface
                 $itemData,
                 $this->entityFieldsDataSource->getExtraFields()
             );
-            return $command->execute();
+            $dealId = $command->execute();
+            return $this->read($dealId);
         } catch (InvalidCommandType $e) {
             throw new DataStoreException("Buy update entity get exception - {$e->getMessage()}", $e->getCode(), $e);
         }

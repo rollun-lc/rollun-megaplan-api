@@ -45,14 +45,14 @@ class ConfigProvider
     public function getDataStore()
     {
         return [
-            "Deals-13" => [
+            /*"Deals-13" => [
                 MegaplanAbstractFactory::KEY_CLASS => Deals::class,
                 MegaplanAbstractFactory::KEY_MEGAPLAN_COMMAND_BUILDER => "MegaplanCommandBuilder",
             ],
             "Contractor-13" => [
                 MegaplanAbstractFactory::KEY_CLASS => Contractors::class,
                 MegaplanAbstractFactory::KEY_MEGAPLAN_COMMAND_BUILDER => "MegaplanCommandBuilder",
-            ],
+            ],*/
         ];
     }
 

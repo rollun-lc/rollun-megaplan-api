@@ -9,12 +9,12 @@ use rollun\api\megaplan\MegaplanClient;
 
 abstract class AbstractPutMegaplanCommand extends AbstractMegaplanCommand
 {
-    private $itemData;
+    protected $itemData;
 
     /**
      * @var array
      */
-    private $extraFields;
+    protected  $extraFields;
 
     /**
      * AbstractPutMegaplanCommand constructor.
@@ -68,7 +68,7 @@ abstract class AbstractPutMegaplanCommand extends AbstractMegaplanCommand
     {
         $preparedItem = [];
         foreach ($itemData as $key => $value) {
-            $fields = preg_grep('/(?<groupName>[a-zA-Z]+)(?<num>[\d]+)CustomField(?<name>'.$key.')/', $this->getExtraFields());
+            $fields = preg_grep('/^(?<groupName>[a-zA-Z]+)(?<num>[\d]+)CustomField(?<name>'.$key.')$/', $this->getExtraFields());
             if(empty($fields)) {
                 $preparedItem[$key] = $value;
             } elseif(count($fields) == 1) {

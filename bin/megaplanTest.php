@@ -25,13 +25,6 @@ $container->setService(LifeCycleToken::class, $lifeCycleToke);
 $dealsDataStore = $container->get("Deals-13");
 $query = new \Xiag\Rql\Parser\Query();
 $query->setLimit(new LimitNode(1));
-$query->setQuery(new AndNode([
-    new EqNode("IsPaid", "Да"),
-    new NeNode("Description", "Что то"),
-    new EqNode("OrderId", "4365768"),
-    new GeNode("DataZakaza", "2017-09-13"),
-    new EqNode("NomerZakazaUPostavshchika", "463758"),
-]));
 $result = $dealsDataStore->query($query);
 print_r($result);
 
@@ -39,5 +32,8 @@ print_r($result);
  * @var \rollun\api\megaplan\DataStore\Contractors $contractorsDataStore
  */
 $contractorsDataStore = $container->get("Contractor-13");
-
-
+/*$query = new \Xiag\Rql\Parser\Query();
+$query->setLimit(new LimitNode(1));
+$result = $contractorsDataStore->query($query);
+print_r($result);
+*/
