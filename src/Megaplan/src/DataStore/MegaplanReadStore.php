@@ -40,7 +40,7 @@ class MegaplanReadStore implements ReadInterface
     protected $megaplanCommandBuilder;
 
     /**
-     * @var MegaplanEntityFieldsDataSource
+     * @var EntityFieldsDataSourceInterface
      */
     protected $entityFieldsDataSource;
 
@@ -62,14 +62,14 @@ class MegaplanReadStore implements ReadInterface
     /**
      * AbstractMegaplanReadStore constructor.
      * @param CommandBuilderInterface $megaplanCommandBuilder
-     * @param MegaplanEntityFieldsDataSource $entityFieldsDataSource
+     * @param EntityFieldsDataSourceInterface $entityFieldsDataSource
      * @param string $programId
      * @param string $getEntityUri
      * @param string $getEntitiesUri
      */
     public function __construct(
         CommandBuilderInterface $megaplanCommandBuilder,
-        MegaplanEntityFieldsDataSource $entityFieldsDataSource,
+        EntityFieldsDataSourceInterface $entityFieldsDataSource,
         string $programId,
         string $getEntityUri,
         string $getEntitiesUri

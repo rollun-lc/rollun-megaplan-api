@@ -27,7 +27,7 @@ class MegaplanDataStore extends MegaplanReadStore implements DataStoresInterface
     /**
      * MegaplanDataStore constructor.
      * @param CommandBuilderInterface $megaplanCommandBuilder
-     * @param MegaplanEntityFieldsDataSource $entityFieldsDataSource
+     * @param EntityFieldsDataSourceInterface $entityFieldsDataSource
      * @param string $programId
      * @param string $getEntityUri
      * @param string $getEntitiesUri
@@ -35,7 +35,7 @@ class MegaplanDataStore extends MegaplanReadStore implements DataStoresInterface
      */
     public function __construct(
         CommandBuilderInterface $megaplanCommandBuilder,
-        MegaplanEntityFieldsDataSource $entityFieldsDataSource,
+        EntityFieldsDataSourceInterface $entityFieldsDataSource,
         string $programId,
         string $getEntityUri,
         string $getEntitiesUri,
