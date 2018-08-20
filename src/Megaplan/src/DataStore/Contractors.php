@@ -4,6 +4,8 @@
 namespace rollun\api\megaplan\DataStore;
 
 
+use rollun\api\megaplan\Command\Builder\CommandBuilderInterface;
+
 class Contractors extends AbstractMegaplanEntity
 {
     /**
@@ -25,4 +27,23 @@ class Contractors extends AbstractMegaplanEntity
      *
      */
     const GET_FIELDS_URI = "/BumsCrmApiV01/Contractor/listFields.api";
+
+    /**
+     * DealsDataStore constructor.
+     * @param CommandBuilderInterface $megaplanCommandBuilder
+     * @param string $programId
+     */
+    public function __construct(
+        CommandBuilderInterface $megaplanCommandBuilder,
+        string $programId
+    )
+    {
+        $entityFieldsDataSource = new ContractorEntityFieldsDataSource();
+        parent::__construct(
+            $megaplanCommandBuilder,
+            $programId,
+            $entityFieldsDataSource
+        );
+    }
+
 }

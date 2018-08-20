@@ -5,7 +5,6 @@ namespace rollun\api\megaplan\DataStore;
 
 
 use rollun\api\megaplan\Command\Builder\CommandBuilderInterface;
-use rollun\api\megaplan\Command\MegaplanCommandBuilderAbstract;
 use rollun\api\megaplan\DataStore\ConditionBuilder\MegaplanConditionBuilder;
 
 abstract class AbstractMegaplanEntity extends MegaplanDataStore
@@ -35,17 +34,21 @@ abstract class AbstractMegaplanEntity extends MegaplanDataStore
      * DealsDataStore constructor.
      * @param CommandBuilderInterface $megaplanCommandBuilder
      * @param string $programId
+     * @param EntityFieldsDataSourceInterface|null $entityFieldsDataSource
      */
     public function __construct(
         CommandBuilderInterface $megaplanCommandBuilder,
-        string $programId
+        string $programId,
+        EntityFieldsDataSourceInterface $entityFieldsDataSource = null
     )
     {
-        $entityFieldsDataSource = new MegaplanEntityFieldsDataSource(
-            $megaplanCommandBuilder,
-            static::GET_FIELDS_URI,
-            $programId
-        );
+        if(is_null($entityFieldsDataSource)) {
+            $entityFieldsDataSource = new MegaplanEntityFieldsDataSource(
+                $megaplanCommandBuilder,
+                static::GET_FIELDS_URI,
+                $programId
+            );
+        }
         parent::__construct(
             $megaplanCommandBuilder,
             $entityFieldsDataSource,

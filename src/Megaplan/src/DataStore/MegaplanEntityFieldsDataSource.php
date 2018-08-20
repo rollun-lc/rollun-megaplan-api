@@ -9,7 +9,7 @@ use rollun\api\megaplan\Command\Builder\CommandBuilderInterface;
 use rollun\api\megaplan\Command\RequestEntitiesMegaplanCommand;
 use rollun\datastore\DataStore\Interfaces\DataSourceInterface;
 
-class MegaplanEntityFieldsDataSource implements DataSourceInterface
+class MegaplanEntityFieldsDataSource implements EntityFieldsDataSourceInterface
 {
 
     /**
