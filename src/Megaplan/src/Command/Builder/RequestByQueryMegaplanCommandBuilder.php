@@ -6,6 +6,7 @@ namespace rollun\api\megaplan\Command\Builder;
 use rollun\api\megaplan\Command\CommandInterface;
 use rollun\api\megaplan\Command\RequestEntitiesMegaplanCommand;
 use rollun\api\megaplan\DataStore\ConditionBuilder\MegaplanConditionBuilder;
+use rollun\api\megaplan\DataStore\EntityFieldsDataSourceInterface;
 use rollun\api\megaplan\DataStore\MegaplanEntityFieldsDataSource;
 use rollun\api\megaplan\Exception\InvalidCommandType;
 use rollun\api\megaplan\MegaplanClient;
@@ -41,7 +42,7 @@ class RequestByQueryMegaplanCommandBuilder extends AbstractMegaplanCommandBuilde
      * @return AbstractQueryNode
      * @throws InvalidCommandType
      */
-    protected function rebuildQuery(AbstractQueryNode $query, MegaplanEntityFieldsDataSource $entityFieldsDataSource)
+    protected function rebuildQuery(AbstractQueryNode $query, EntityFieldsDataSourceInterface $entityFieldsDataSource)
     {
         if($query instanceof AbstractScalarOperatorNode) {
             $query->setField($entityFieldsDataSource->warpField($query->getField()));
@@ -71,7 +72,7 @@ class RequestByQueryMegaplanCommandBuilder extends AbstractMegaplanCommandBuilde
         }
 
         $entityFieldsDataSource = array_pop($args);
-        if (!$entityFieldsDataSource || !$entityFieldsDataSource instanceof MegaplanEntityFieldsDataSource) {
+        if (!$entityFieldsDataSource || !$entityFieldsDataSource instanceof EntityFieldsDataSourceInterface) {
             throw new \InvalidArgumentException("entityFieldsDataSource not set or not valid.");
         }
         $uri = array_pop($args);
