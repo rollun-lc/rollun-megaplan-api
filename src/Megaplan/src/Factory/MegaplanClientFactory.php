@@ -27,6 +27,7 @@ class MegaplanClientFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         $config = $container->get('config');
+
         if (!isset($config[static::KEY])) {
             throw new ServiceNotFoundException(
                 sprintf("Can't create a service because there is no section \"%s\" in the config.", static::KEY)
@@ -34,6 +35,10 @@ class MegaplanClientFactory implements FactoryInterface
         }
 
         $serviceConfig = $config[static::KEY];
+        if(isset($serviceConfig[$requestedName]) && is_array($serviceConfig[$requestedName])) {
+            $serviceConfig = $serviceConfig[$requestedName];
+        }
+
         // Required megaplan connection params are expected
         if (!(isset($serviceConfig[static::KEY_API_URL]) &&
             isset($serviceConfig[static::KEY_API_LOGIN]) &&
