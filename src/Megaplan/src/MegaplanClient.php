@@ -48,7 +48,11 @@ class MegaplanClient
             if(!empty($entityType)) {
                 $this->setEntityType($entityType);
             }
-            $response = $this->client->get($uri, $params);
+            if(strstr($uri, 'save.api') !== false) {
+                $response = $this->client->post($uri, $params);
+            } else {
+                $response = $this->client->get($uri, $params);
+            }
             // Fetch data from response
             $data = $this->serializer->unserialize($response);
             return $data;
