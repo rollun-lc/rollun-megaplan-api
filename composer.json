@@ -8,11 +8,10 @@
     "sort-packages": true
   },
   "require": {
-    "php": "^7.0",
+    "php": "^7.1",
     "ext-json": "*",
-    "http-interop/http-middleware": "0.4.1",
     "megaplan/simple_client": "^1.0.0",
-    "rollun-com/rollun-datastore": "^5.0",
+    "rollun-com/rollun-datastore": "^6.0",
     "zendframework/zend-serializer": "^2.9",
     "zendframework/zend-servicemanager": "^3.3",
     "zendframework/zend-stdlib": "^3.1"
