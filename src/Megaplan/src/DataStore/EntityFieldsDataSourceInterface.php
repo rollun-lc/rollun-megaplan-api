@@ -3,10 +3,7 @@
 
 namespace rollun\api\megaplan\DataStore;
 
-
-use rollun\datastore\DataStore\Interfaces\DataSourceInterface;
-
-interface EntityFieldsDataSourceInterface extends DataSourceInterface
+interface EntityFieldsDataSourceInterface
 {
 
     /**
