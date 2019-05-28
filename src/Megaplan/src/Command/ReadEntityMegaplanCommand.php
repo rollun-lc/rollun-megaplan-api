@@ -54,4 +54,16 @@ class ReadEntityMegaplanCommand extends AbstractSpecificEntityMegaplanCommand
         ]);
     }
 
+    public function execute()
+    {
+        $item = parent::execute();
+        $unwarpItem = [];
+        foreach ($item as $key => $value) {
+            if (preg_match('/Category([\d]+)CustomField(?<field_name>[\w\d]+)$/', $key, $match)) {
+                $key = $match["field_name"];
+            }
+            $unwarpItem[$key] = $value;
+        }
+        return $unwarpItem;
+    }
 }
