@@ -68,12 +68,12 @@ class MegaplanClient
             if (!empty($entityType)) {
                 $this->setEntityType($entityType);
             }
-            if (strstr($uri, 'save.api') !== false) {
+            if (false !== strpos($uri, 'save.api')) {
                 $response = $this->client->post($uri, $params);
             } else {
                 $response = $this->client->get($uri, $params);
             }
-            if ($this->client->getError() !== '' || $this->client->getError() !== null) {
+            if ($this->client->getError() !== '' && $this->client->getError() !== null) {
                 $this->logger->warning('Megaplan client. Response has error', [
                     'info' => $this->client->getInfo(),
                     'error' => $this->client->getError(),
