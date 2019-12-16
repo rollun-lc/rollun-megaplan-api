@@ -36,9 +36,11 @@ class Contractors extends AbstractMegaplanEntity
     public function __construct(
         CommandBuilderInterface $megaplanCommandBuilder,
         string $programId
-    )
-    {
-        $entityFieldsDataSource = new ContractorEntityFieldsDataSource();
+    ) {
+        $entityFieldsDataSource = new ContractorEntityFieldsDataSource(
+            $megaplanCommandBuilder,
+            static::GET_FIELDS_URI
+        );
         parent::__construct(
             $megaplanCommandBuilder,
             $programId,
