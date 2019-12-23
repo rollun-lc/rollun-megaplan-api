@@ -21,6 +21,9 @@ use rollun\datastore\DataStore\Traits\NoSupportCountTrait;
 use rollun\datastore\DataStore\Traits\NoSupportIteratorTrait;
 use rollun\datastore\Rql\RqlParser;
 use Traversable;
+use Xiag\Rql\Parser\Node\Query\LogicOperator\AndNode;
+use Xiag\Rql\Parser\Node\Query\LogicOperator\OrNode;
+use Xiag\Rql\Parser\Node\Query\ScalarOperator\EqNode;
 use Xiag\Rql\Parser\Query;
 
 /**
@@ -162,6 +165,7 @@ class MegaplanReadStore implements ReadInterface
     public function query(Query $query)
     {
         try {
+            $this->addRequiredNodes($query);
             $command = $this->megaplanCommandBuilder
                 ->build(
                     RequestByQueryMegaplanCommandBuilder::COMMAND_TYPE,
@@ -174,5 +178,18 @@ class MegaplanReadStore implements ReadInterface
             $rql = RqlParser::rqlEncode($query);
             throw new DataStoreException("Get exception by query entities - $rql.", $e->getCode(), $e);
         }
+    }
+
+    /**
+     * Create required nodes
+     *
+     * @param Query $query
+     */
+    protected function addRequiredNodes(Query &$query) {
+        $node = new EqNode(ReadEntityMegaplanCommand::KEY_PROGRAM, $this->programId);
+        if ($queryNode = $query->getQuery()) {
+            $node = new AndNode([$queryNode, $node]);
+        }
+        $query->setQuery($node);
     }
 }
