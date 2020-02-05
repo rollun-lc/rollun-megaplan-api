@@ -5,6 +5,8 @@ namespace rollun\api\megaplan\Factory;
 use Interop\Container\ContainerInterface;
 use rollun\api\megaplan\MegaplanClient;
 use rollun\api\megaplan\Serializer\MegaplanSerializer;
+use rollun\api\megaplan\SimpleClient;
+use Zend\Cache\StorageFactory;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
 use Megaplan\SimpleClient\Client;
@@ -18,6 +20,7 @@ class MegaplanClientFactory implements FactoryInterface
     const KEY_API_PASSWORD = 'password';
 
     const KEY_SERIALIZER = "serializer";
+    const KEY_STORAGE = 'storage';
 
     /**
      * {@inheritdoc}
@@ -50,12 +53,23 @@ class MegaplanClientFactory implements FactoryInterface
             );
         }
 
-        $instance = new Client($serviceConfig[static::KEY_API_URL]);
+        $client = new Client($serviceConfig[static::KEY_API_URL]);
+
+        $serializer = $container->get($serviceConfig[static::KEY_SERIALIZER] ?? MegaplanSerializer::class);
+
+        $storage = null;
+        $storageConfig =$serviceConfig[static::KEY_STORAGE] ?? null;
+        if (!empty($storageConfig) && (is_array($storageConfig) || $storageConfig instanceof \Traversable)) {
+            $storage = StorageFactory::factory($storageConfig);
+        }
+
+        $instance = new MegaplanClient($client, $serializer, $storage);
+
         // If both login and password are empty skip an authorization
         if (!(empty($serviceConfig[static::KEY_API_LOGIN]) && empty($serviceConfig[static::KEY_API_PASSWORD]))) {
             $instance->auth($serviceConfig[static::KEY_API_LOGIN], $serviceConfig[static::KEY_API_PASSWORD]);
         }
-        $serializer = $container->get($serviceConfig[static::KEY_SERIALIZER] ?? MegaplanSerializer::class);
-        return new MegaplanClient($instance, $serializer);
+
+        return $instance;
     }
 }

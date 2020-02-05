@@ -9,6 +9,7 @@ use Psr\Log\LoggerInterface;
 use rollun\api\megaplan\Exception\ClientException;
 use rollun\api\megaplan\Serializer\MegaplanSerializerOptionsInterface;
 use rollun\dic\InsideConstruct;
+use Zend\Cache\Storage\StorageInterface;
 use Zend\Serializer\Adapter\AdapterInterface;
 
 /**
@@ -31,16 +32,29 @@ class MegaplanClient
     private $logger;
 
     /**
+     * @var StorageInterface
+     */
+    private $storage;
+
+    private const STORAGE_KEY = 'megaplan_auth';
+
+    /**
      * MegaplanClient constructor.
      * @param Client $client
      * @param AdapterInterface $serializer
+     * @param StorageInterface $storage
      * @throws \ReflectionException
      */
-    public function __construct(Client $client, AdapterInterface $serializer, LoggerInterface $logger = null)
-    {
+    public function __construct(
+        Client $client,
+        AdapterInterface $serializer,
+        ?StorageInterface $storage,
+        LoggerInterface $logger = null
+    ) {
         InsideConstruct::init(['logger' => LoggerInterface::class]);
         $this->client = $client;
         $this->serializer = $serializer;
+        $this->storage = $storage;
     }
 
     public function __sleep()
@@ -48,6 +62,7 @@ class MegaplanClient
         return [
             'client',
             'serializer',
+            'storage'
         ];
     }
 
@@ -103,6 +118,25 @@ class MegaplanClient
             method_exists($this->serializer, "getOptions") &&
             $this->serializer->getOptions() instanceof MegaplanSerializerOptionsInterface) {
             $this->serializer->getOptions()->setEntity($entityType);
+        }
+    }
+
+    /**
+     * @param $login
+     * @param $password
+     * @throws \Exception
+     */
+    public function auth($login, $password)
+    {
+        $auth = $this->storage ? json_decode($this->storage->getItem(self::STORAGE_KEY)) : null;
+        if (!empty($auth) && isset($auth->AccessId) && isset($auth->SecretKey)) {
+            $this->client->setAccessId($auth->AccessId);
+            $this->client->setSecretKey($auth->SecretKey);
+        } else {
+            $this->client->auth($login, $password);
+            if ($this->storage and $result = $this->client->getResult() and !empty($result->data)) {
+                $this->storage->setItem(self::STORAGE_KEY, json_encode($result->data));
+            }
         }
     }
 
