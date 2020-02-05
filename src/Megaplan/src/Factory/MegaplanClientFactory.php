@@ -5,7 +5,6 @@ namespace rollun\api\megaplan\Factory;
 use Interop\Container\ContainerInterface;
 use rollun\api\megaplan\MegaplanClient;
 use rollun\api\megaplan\Serializer\MegaplanSerializer;
-use rollun\api\megaplan\SimpleClient;
 use Zend\Cache\StorageFactory;
 use Zend\ServiceManager\Exception\ServiceNotFoundException;
 use Zend\ServiceManager\Factory\FactoryInterface;
