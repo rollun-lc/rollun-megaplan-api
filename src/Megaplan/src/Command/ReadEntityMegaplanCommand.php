@@ -5,6 +5,7 @@ namespace rollun\api\megaplan\Command;
 
 use rollun\api\megaplan\Command\AbstractMegaplanCommand;
 use rollun\api\megaplan\MegaplanClient;
+use rollun\api\megaplan\Traits\CustomFieldMappingTrait;
 
 /**
  * Class ReadEntityMegaplanCommand
@@ -12,6 +13,9 @@ use rollun\api\megaplan\MegaplanClient;
  */
 class ReadEntityMegaplanCommand extends AbstractSpecificEntityMegaplanCommand
 {
+
+    use CustomFieldMappingTrait;
+
     /**
      * @var array
      */
@@ -57,13 +61,7 @@ class ReadEntityMegaplanCommand extends AbstractSpecificEntityMegaplanCommand
     public function execute()
     {
         $item = parent::execute();
-        $unwarpItem = [];
-        foreach ($item as $key => $value) {
-            if (preg_match('/Category([\d]+)CustomField(?<field_name>[\w\d]+)$/', $key, $match)) {
-                $key = $match["field_name"];
-            }
-            $unwarpItem[$key] = $value;
-        }
-        return $unwarpItem;
+
+        return $this->customFieldMap($item);
     }
 }
