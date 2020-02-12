@@ -7,11 +7,15 @@ namespace rollun\api\megaplan\Command;
 use rollun\api\megaplan\DataStore\ConditionBuilder\MegaplanConditionBuilder;
 use rollun\api\megaplan\Exception\InvalidRequestCountException;
 use rollun\api\megaplan\MegaplanClient;
+use rollun\api\megaplan\Traits\CustomFieldMappingTrait;
 use rollun\datastore\DataStore\Interfaces\ReadInterface;
 use Xiag\Rql\Parser\Query;
 
 class RequestEntitiesMegaplanCommand extends AbstractMegaplanCommand
 {
+
+    use CustomFieldMappingTrait;
+
     /**
      * The Megaplan API allows send requests not more than this limit per hour
      */
@@ -86,16 +90,8 @@ class RequestEntitiesMegaplanCommand extends AbstractMegaplanCommand
             //count($data) == $this->requestParams['Offset']
         } while (count($data) < $limit && count($partData) == $this->requestParams["Limit"]);
         $this->reset();
-        return array_map(function ($item) {
-            $unwarpItem = [];
-            foreach ($item as $key => $value) {
-                if(preg_match('/Category([\d]+)CustomField(?<field_name>[\w\d]+)$/', $key,$match)) {
-                    $key = $match["field_name"];
-                }
-                $unwarpItem[$key] = $value;
-            }
-            return $unwarpItem;
-        }, $data);
+
+        return array_map([$this, 'customFieldMap'], $data);
     }
 
 
