@@ -17,6 +17,7 @@ class MegaplanClientFactory implements FactoryInterface
     const KEY_API_URL = 'api_url';
     const KEY_API_LOGIN = 'login';
     const KEY_API_PASSWORD = 'password';
+    const KEY_API_TIMEOUT = 'timeout';
 
     const KEY_SERIALIZER = "serializer";
     const KEY_STORAGE = 'storage';
@@ -52,7 +53,8 @@ class MegaplanClientFactory implements FactoryInterface
             );
         }
 
-        $client = new Client($serviceConfig[static::KEY_API_URL]);
+        $timeout = $serviceConfig[static::KEY_API_TIMEOUT] ?? 10;
+        $client = new Client($serviceConfig[static::KEY_API_URL], $timeout);
 
         $serializer = $container->get($serviceConfig[static::KEY_SERIALIZER] ?? MegaplanSerializer::class);
 
