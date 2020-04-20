@@ -11,6 +11,7 @@ use rollun\api\megaplan\DataStore\Contractors;
 use rollun\api\megaplan\DataStore\Deals;
 use rollun\api\megaplan\DataStore\Factory\MegaplanAbstractFactory;
 use rollun\api\megaplan\Factory\MegaplanClientFactory;
+use rollun\api\megaplan\Factory\MegaplanProcessAbstractFactory;
 use rollun\api\megaplan\Serializer\MegaplanSerializer;
 use rollun\api\megaplan\Serializer\MegaplanSerializerOptions;
 use rollun\utils\Factory\AbstractServiceAbstractFactory;
@@ -101,6 +102,7 @@ class ConfigProvider
             'abstract_factories' => [
                 MegaplanAbstractFactory::class,
                 AbstractServiceAbstractFactory::class,
+                MegaplanProcessAbstractFactory::class,
             ],
             'aliases' => [],
         ];
