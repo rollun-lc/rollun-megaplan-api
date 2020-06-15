@@ -88,19 +88,30 @@ class MegaplanClient
             } else {
                 $response = $this->client->get($uri, $params);
             }
+
             if ($this->client->getError() !== '' && $this->client->getError() !== null) {
-                $this->logger->warning('Megaplan client. Response has error', [
+                $this->logger->warning('Megaplan client. Curl error', [
                     'info' => $this->client->getInfo(),
                     'error' => $this->client->getError(),
                     'response' => $response,
                 ]);
-            } else {
-                $this->logger->debug('Megaplan client. Raw response', [
-                    'info' => $this->client->getInfo(),
-                    'error' => $this->client->getError(),
-                    'response' => $response,
-                ]);
+                throw new \RuntimeException('Megaplan client. Curl error');
             }
+
+            if ($this->client->getInfo('http_code') === 502) {
+                $this->logger->warning('Megaplan client. Bad gateway', [
+                    'info' => $this->client->getInfo(),
+                    'response' => $response,
+                ]);
+                throw new \RuntimeException('Megaplan client. Bad gateway');
+            }
+
+            $this->logger->debug('Megaplan client. Raw response', [
+                'info' => $this->client->getInfo(),
+                'error' => $this->client->getError(),
+                'response' => $response,
+            ]);
+
             // Fetch data from response
             $data = $this->serializer->unserialize($response);
             return $data;
