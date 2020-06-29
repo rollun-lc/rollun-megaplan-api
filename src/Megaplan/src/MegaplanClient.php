@@ -109,14 +109,19 @@ class MegaplanClient
             $this->logger->debug('Megaplan client. Raw response', [
                 'info' => $this->client->getInfo(),
                 'error' => $this->client->getError(),
-                'response' => $response,
+                // TODO
+                'response' => strlen($response) < 65535 ? $response : 'Too long string',
             ]);
 
             // Fetch data from response
             $data = $this->serializer->unserialize($response);
             return $data;
         } catch (\Exception $exception) {
-            throw new ClientException("By do request get error: {$exception->getMessage()}.", $exception->getCode(), $exception);
+            throw new ClientException(
+                "By do request get error: {$exception->getMessage()}.",
+                $exception->getCode(),
+                $exception
+            );
         }
     }
 
