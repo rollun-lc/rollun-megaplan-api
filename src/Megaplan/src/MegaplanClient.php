@@ -106,12 +106,12 @@ class MegaplanClient
                 throw new \RuntimeException('Megaplan client. Bad gateway');
             }
 
-            $this->logger->debug('Megaplan client. Raw response', [
+            /*$this->logger->debug('Megaplan client. Raw response', [
                 'info' => $this->client->getInfo(),
                 'error' => $this->client->getError(),
                 // TODO
-                'response' => strlen($response) < 65535 ? $response : 'Too long string',
-            ]);
+                'response' => strlen($response) < 32766 ? $response : 'Too long string',
+            ]);*/
 
             // Fetch data from response
             $data = $this->serializer->unserialize($response);
