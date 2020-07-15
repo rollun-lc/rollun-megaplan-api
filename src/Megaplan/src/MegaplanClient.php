@@ -93,15 +93,19 @@ class MegaplanClient
                 $this->logger->warning('Megaplan client. Curl error', [
                     'info' => $this->client->getInfo(),
                     'error' => $this->client->getError(),
+                    'uri' => $uri,
+                    'params' => $params,
                     'response' => $response,
                 ]);
                 throw new \RuntimeException('Megaplan client. Curl error');
             }
 
-            if ($this->client->getInfo('http_code') === 502) {
+            if ($this->client->getInfo('http_code') == 502) {
                 $this->logger->warning('Megaplan client. Bad gateway', [
                     'info' => $this->client->getInfo(),
                     'response' => $response,
+                    'uri' => $uri,
+                    'params' => $params,
                 ]);
                 throw new \RuntimeException('Megaplan client. Bad gateway');
             }
