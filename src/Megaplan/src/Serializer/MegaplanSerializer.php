@@ -2,6 +2,7 @@
 
 namespace rollun\api\megaplan\Serializer;
 
+use rollun\api\megaplan\Exception\InvalidResponseException;
 use rollun\dic\InsideConstruct;
 use RuntimeException;
 use Zend\Serializer\Adapter\Json;
@@ -66,7 +67,7 @@ class MegaplanSerializer extends Json
      *
      * @param string $serialized
      * @return array
-     * @throws RuntimeException
+     * @throws InvalidResponseException
      */
     public function unserialize($serialized)
     {
@@ -81,9 +82,10 @@ class MegaplanSerializer extends Json
         /**
          * API returns not number of error. Instead "error" or "ok"
          */
-        if ('error' == $unserializedData['status']['code']) {
-            throw new RuntimeException($unserializedData['status']["message"]);
+        if ('error' === $unserializedData['status']['code']) {
+            throw new InvalidResponseException('Response error message: ' . $unserializedData['status']["message"]);
         }
+
         $rawUnserializedData = current($unserializedData["data"]);
         return $rawUnserializedData;
     }

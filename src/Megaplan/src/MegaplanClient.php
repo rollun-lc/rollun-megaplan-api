@@ -7,6 +7,7 @@ namespace rollun\api\megaplan;
 use Megaplan\SimpleClient\Client;
 use Psr\Log\LoggerInterface;
 use rollun\api\megaplan\Exception\ClientException;
+use rollun\api\megaplan\Exception\InvalidResponseException;
 use rollun\api\megaplan\Serializer\MegaplanSerializerOptionsInterface;
 use rollun\dic\InsideConstruct;
 use rollun\utils\CallAttemptsTrait;
@@ -95,9 +96,10 @@ class MegaplanClient
                 $response = $this->sendGetRequest($uri, $params);
             }
 
-            return $response;
+            // Fetch data from response
+            return $this->serializer->unserialize($response);
         } catch (\Exception $exception) {
-            $this->logger->error($exception->getMessage(), [
+            $this->logger->error('Megaplan error. ' . $exception->getMessage(), [
                 'info' => $this->client->getInfo(),
                 'error' => $this->client->getError(),
                 'uri' => $uri,
@@ -125,25 +127,26 @@ class MegaplanClient
     {
         $response = $this->client->post($uri, $params);
 
-        if ($this->client->getError() !== '' && $this->client->getError() !== null) {
-            throw new \RuntimeException('Megaplan client. Curl error');
-        }
-
         if ($this->client->getInfo('http_code') == 502) {
-            throw new \RuntimeException('Megaplan client. Bad gateway');
+            throw new ClientException('Bad gateway');
         }
 
-        // Fetch data from response
-        return $this->serializer->unserialize($response);
+        if ($this->client->getError() !== '' && $this->client->getError() !== null) {
+            throw new ClientException('Curl error with message: ' . $this->client->getError());
+        }
+
+        return $response;
     }
 
     /**
      * @param $uri
-     * 
+     *
      * @param array|null $params
-     * 
+     *
      * @return array
-     * 
+     *
+     * @throws ClientException
+     * @throws InvalidResponseException
      * @throws \Throwable
      */
     protected function sendGetRequest($uri, array $params = null)
@@ -151,16 +154,15 @@ class MegaplanClient
         return self::callAttemptsCallable(4, 15000000, function() use ($uri, $params) {
             $response = $this->client->get($uri, $params);
 
+            if ($this->client->getInfo('http_code') === 502) {
+                throw new ClientException('Bad gateway');
+            }
+
             if ($this->client->getError() !== '' && $this->client->getError() !== null) {
-                throw new \RuntimeException('Megaplan client. Curl error');
+                throw new ClientException('Curl error with message: ' . $this->client->getError());
             }
 
-            if ($this->client->getInfo('http_code') == 502) {
-                throw new \RuntimeException('Megaplan client. Bad gateway');
-            }
-
-            // Fetch data from response
-            return $this->serializer->unserialize($response);
+            return $response;
         });
     }
 
