@@ -7,7 +7,7 @@ namespace rollun\api\megaplan;
 use Megaplan\SimpleClient\Client;
 use Psr\Log\LoggerInterface;
 use rollun\api\megaplan\Exception\ClientException;
-use rollun\api\megaplan\Exception\InvalidResponseException;
+use rollun\api\megaplan\Exception\RequestLimitException;
 use rollun\api\megaplan\Serializer\MegaplanSerializerOptionsInterface;
 use rollun\dic\InsideConstruct;
 use rollun\utils\CallAttemptsTrait;
@@ -98,6 +98,19 @@ class MegaplanClient
 
             // Fetch data from response
             return $this->serializer->unserialize($response);
+        } catch (RequestLimitException $exception) {
+            $this->logger->alert('Request limit exceeded', [
+                'info' => $this->client->getInfo(),
+                'error' => $this->client->getError(),
+                'uri' => $uri,
+                'params' => $params,
+                'response' => $response ?? null,
+            ]);
+            throw new ClientException(
+                "By do request get error: {$exception->getMessage()}.",
+                $exception->getCode(),
+                $exception
+            );
         } catch (\Exception $exception) {
             $this->logger->error('Megaplan error. ' . $exception->getMessage(), [
                 'info' => $this->client->getInfo(),
@@ -116,16 +129,22 @@ class MegaplanClient
 
     /**
      * @param $uri
-     * 
+     *
      * @param array|null $params
-     * 
+     *
      * @return mixed
-     * 
+     *
      * @throws \Exception
+     * @throws RequestLimitException
      */
     protected function sendPostRequest($uri, array $params = null)
     {
         $response = $this->client->post($uri, $params);
+
+        if ($this->client->getInfo('http_code') === 429) {
+            $this->logger->critical('Request limit exceeded. No retry POST request');
+            throw new RequestLimitException();
+        }
 
         if ($this->client->getInfo('http_code') == 502) {
             throw new ClientException('Bad gateway');
@@ -146,13 +165,18 @@ class MegaplanClient
      * @return array
      *
      * @throws ClientException
-     * @throws InvalidResponseException
      * @throws \Throwable
+     * @throws RequestLimitException
      */
     protected function sendGetRequest($uri, array $params = null)
     {
         return self::callAttemptsCallable(4, 15000000, function() use ($uri, $params) {
             $response = $this->client->get($uri, $params);
+
+            if ($this->client->getInfo('http_code') === 429) {
+                $this->logger->critical('Request limit exceeded. Retry GET request after 15 seconds');
+                throw new RequestLimitException();
+            }
 
             if ($this->client->getInfo('http_code') === 502) {
                 throw new ClientException('Bad gateway');
