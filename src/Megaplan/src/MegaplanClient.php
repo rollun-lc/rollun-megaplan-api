@@ -10,6 +10,7 @@ use rollun\api\megaplan\Exception\ClientException;
 use rollun\api\megaplan\Exception\RequestLimitException;
 use rollun\api\megaplan\Serializer\MegaplanSerializerOptionsInterface;
 use rollun\dic\InsideConstruct;
+use rollun\logger\Writer\PrometheusWriter;
 use rollun\utils\CallAttemptsTrait;
 use Zend\Cache\Storage\StorageInterface;
 use Zend\Serializer\Adapter\AdapterInterface;
@@ -141,6 +142,11 @@ class MegaplanClient
     {
         $response = $this->client->post($uri, $params);
 
+        $this->logger->notice('METRICS_COUNTER', [
+            PrometheusWriter::METRIC_ID => 'megaplan_requests',
+            PrometheusWriter::VALUE => 1
+        ]);
+
         if ($this->client->getInfo('http_code') === 429) {
             $this->logger->critical('Request limit exceeded. No retry POST request');
             throw new RequestLimitException();
@@ -172,6 +178,11 @@ class MegaplanClient
     {
         return self::callAttemptsCallable(4, 15000000, function() use ($uri, $params) {
             $response = $this->client->get($uri, $params);
+
+            $this->logger->notice('METRICS_COUNTER', [
+                PrometheusWriter::METRIC_ID => 'megaplan_requests',
+                PrometheusWriter::VALUE => 1
+            ]);
 
             if ($this->client->getInfo('http_code') === 429) {
                 $this->logger->critical('Request limit exceeded. Retry GET request after 15 seconds');
