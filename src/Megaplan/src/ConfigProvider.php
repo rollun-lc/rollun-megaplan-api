@@ -4,6 +4,8 @@
 namespace rollun\api\megaplan;
 
 
+use Psr\Log\LoggerInterface;
+use rollun\api\megaplan\Callback\ResetCounterCallback;
 use rollun\api\megaplan\Command\Builder\CommandBuilderPipe;
 use rollun\api\megaplan\Command\Builder\RequestByQueryMegaplanCommandBuilder;
 use rollun\api\megaplan\Command\Builder\MegaplanCommandBuilderAbstract;
@@ -81,6 +83,9 @@ class ConfigProvider
             RequestByQueryMegaplanCommandBuilder::class => [
                 "megaplanClient" => MegaplanClient::class,
             ],
+            ResetCounterCallback::class => [
+                'logger' => LoggerInterface::class,
+            ]
         ];
     }
 

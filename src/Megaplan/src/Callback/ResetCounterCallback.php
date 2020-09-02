@@ -26,6 +26,8 @@ class ResetCounterCallback
 
     public function __invoke()
     {
+        $this->logger->debug('Reset megaplan request counter');
+
         $this->logger->notice('METRICS_COUNTER', [
             PrometheusWriter::METRIC_ID => 'megaplan_requests',
             PrometheusWriter::VALUE => 0,
