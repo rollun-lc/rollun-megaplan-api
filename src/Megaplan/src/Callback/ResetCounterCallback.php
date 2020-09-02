@@ -17,6 +17,11 @@ class ResetCounterCallback
         $this->logger = $logger;
     }
 
+    public function __sleep()
+    {
+        return [];
+    }
+
     public function __wakeup()
     {
         InsideConstruct::initWakeup([
