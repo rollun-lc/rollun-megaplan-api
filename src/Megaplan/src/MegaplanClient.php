@@ -7,7 +7,9 @@ namespace rollun\api\megaplan;
 use Megaplan\SimpleClient\Client;
 use Psr\Log\LoggerInterface;
 use rollun\api\megaplan\Exception\ClientException;
+use rollun\api\megaplan\Exception\RequestGetLimitException;
 use rollun\api\megaplan\Exception\RequestLimitException;
+use rollun\api\megaplan\Exception\RequestPostLimitException;
 use rollun\api\megaplan\Serializer\MegaplanSerializerOptionsInterface;
 use rollun\dic\InsideConstruct;
 use rollun\logger\Writer\PrometheusWriter;
@@ -99,8 +101,16 @@ class MegaplanClient
 
             // Fetch data from response
             return $this->serializer->unserialize($response);
-        } catch (RequestLimitException $exception) {
-            $this->logger->alert('Request limit exceeded', [
+        } catch (RequestGetLimitException $exception) {
+            $this->logger->alert('Request GET limit exceeded after 4 attempts', [
+                'info' => $this->client->getInfo(),
+                'error' => $this->client->getError(),
+                'uri' => $uri,
+                'params' => $params,
+                'response' => $response ?? null,
+            ]);
+        } catch (RequestPostLimitException $exception) {
+            $this->logger->alert('Request POST limit exceeded without retrying', [
                 'info' => $this->client->getInfo(),
                 'error' => $this->client->getError(),
                 'uri' => $uri,
@@ -136,7 +146,7 @@ class MegaplanClient
      * @return mixed
      *
      * @throws \Exception
-     * @throws RequestLimitException
+     * @throws RequestPostLimitException
      */
     protected function sendPostRequest($uri, array $params = null)
     {
@@ -148,8 +158,8 @@ class MegaplanClient
         ]);
 
         if ($this->client->getInfo('http_code') === 429) {
-            $this->logger->critical('Request limit exceeded. No retry POST request');
-            throw new RequestLimitException();
+            //$this->logger->error('Request limit exceeded. No retry POST request');
+            throw new RequestPostLimitException();
         }
 
         if ($this->client->getInfo('http_code') == 502) {
@@ -172,7 +182,7 @@ class MegaplanClient
      *
      * @throws ClientException
      * @throws \Throwable
-     * @throws RequestLimitException
+     * @throws RequestGetLimitException
      */
     protected function sendGetRequest($uri, array $params = null)
     {
@@ -185,8 +195,8 @@ class MegaplanClient
             ]);
 
             if ($this->client->getInfo('http_code') === 429) {
-                $this->logger->critical('Request limit exceeded. Retry GET request after 15 seconds');
-                throw new RequestLimitException();
+                $this->logger->error('Request GET limit exceeded. Retry GET request after 15 seconds');
+                throw new RequestGetLimitException();
             }
 
             if ($this->client->getInfo('http_code') === 502) {
