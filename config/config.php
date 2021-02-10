@@ -11,10 +11,13 @@ $cacheConfig = [
 ];
 
 $aggregator = new ConfigAggregator([
-    \rollun\api\megaplan\ConfigProvider::class,
     \Zend\Serializer\ConfigProvider::class,
     \Zend\Db\ConfigProvider::class,
     \Zend\Validator\ConfigProvider::class,
+    \rollun\callback\ConfigProvider::class,
+    \rollun\api\megaplan\ConfigProvider::class,
+    \rollun\tracer\ConfigProvider::class,
+    \rollun\logger\ConfigProvider::class,
     // Include cache configuration
     new ArrayProvider($cacheConfig),
     // Load application config in a pre-defined order in such a way that local settings
