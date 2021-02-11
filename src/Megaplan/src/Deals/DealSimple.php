@@ -8,7 +8,7 @@ use rollun\utils\Json\Exception;
 
 class DealSimple extends DealAbstract
 {
-    private const CONSTANT_FIELDS = [
+    protected const CONSTANT_FIELDS = [
         'Id',
         'ProgramId',
         'TimeCreated',
@@ -17,32 +17,32 @@ class DealSimple extends DealAbstract
         'Name',
     ];
 
-    private const MEGAPLAN_CUSTOM_FIELD_PATTERN = '/Category(?<id>[\d]+)CustomField(?<field>[\w]+)/';
+    protected const MEGAPLAN_CUSTOM_FIELD_PATTERN = '/Category(?<id>[\d]+)CustomField(?<field>[\w]+)/';
 
     /**
      * @var array
      */
-    private $params = [];
+    protected $params = [];
 
     /**
      * @var array
      */
-    private $extraParams = [];
+    protected $extraParams = [];
 
     /**
      * @var array
      */
-    private $changedParams = [];
+    protected $changedParams = [];
 
     /**
      * @var callable|null
      */
-    private $fieldMapper;
+    protected $fieldMapper;
 
     /**
      * @var string
      */
-    private $extraFieldId;
+    protected $extraFieldId;
 
 
     /**
