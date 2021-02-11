@@ -3,7 +3,6 @@
 
 namespace rollun\test\api\megaplan\Callback\Interrupter;
 
-
 use Jaeger\Tracer\Tracer;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -88,23 +87,6 @@ class MegaplanProcessTest extends TestCase
         $deal = json_decode($json, JSON_OBJECT_AS_ARRAY);
 
         $this->assertEquals($data['data']['deal'], $deal);
-    }
-
-    protected function diff($param1, $param2 = null, $results=[])
-    {
-        if (is_scalar($param1) || is_scalar($param2)) {
-            if ($param1 !== $param2) {
-                $results[] = $param1;
-            }
-        } else {
-            foreach ($param1 as $key => $value) {
-                if ($result = $this->diff($value, $param2[$key] ?? null)) {
-                    $results[$key] = $result;
-                }
-            }
-        }
-
-        return $results;
     }
 
     protected function getTestData()
