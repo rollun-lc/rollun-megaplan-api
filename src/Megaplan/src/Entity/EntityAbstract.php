@@ -1,10 +1,10 @@
 <?php
 
 
-namespace rollun\api\megaplan\Deals;
+namespace rollun\api\megaplan\Entity;
 
 
-abstract class DealAbstract
+abstract class EntityAbstract
 {
     /**
      * @param false $onlyChanged

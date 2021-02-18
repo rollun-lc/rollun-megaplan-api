@@ -6,6 +6,7 @@ namespace rollun\api\megaplan\Factory;
 
 use Interop\Container\ContainerInterface;
 use rollun\api\megaplan\Callback\Interrupter\MegaplanProcess;
+use rollun\api\megaplan\MegaplanClient;
 use rollun\callback\Callback\CallbackException;
 use rollun\callback\Callback\SerializedCallback;
 use rollun\callback\ConfigProvider;
@@ -49,16 +50,6 @@ class MegaplanProcessAbstractFactory extends \rollun\callback\Callback\Interrupt
         $defaultClass = parent::DEFAULT_CLASS;
         $instance = new $defaultClass(new SerializedCallback($callback), $pidKiller, $maxExecuteTime);
 
-        // TODO
-        if (isset($factoryConfig[self::KEY_DEAL_FACTORY])) {
-            if (!class_exists($factoryConfig[self::KEY_DEAL_FACTORY])) {
-                throw new \Exception('Can not create deal factory ' . $factoryConfig[self::KEY_DEAL_FACTORY]);
-            }
-            $dealFactory = new $factoryConfig[self::KEY_DEAL_FACTORY];
-        } elseif (isset($factoryConfig[self::KEY_DEAL_CLASS])) {
-            $dealFactory = new DealFactorySimple($factoryConfig[self::KEY_DEAL_CLASS]);
-        }
-
-        return new $class($instance, $dealFactory ?? null);
+        return new $class($instance);
     }
 }

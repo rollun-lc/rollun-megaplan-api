@@ -1,12 +1,12 @@
 <?php
 
 
-namespace rollun\api\megaplan\Deals;
+namespace rollun\api\megaplan\Entity;
 
 
 use rollun\utils\Json\Exception;
 
-class DealSimple extends DealAbstract
+class EntitySimple extends DealAbstract
 {
     protected const CONSTANT_FIELDS = [
         'Id',

@@ -12,10 +12,15 @@ use rollun\api\megaplan\Command\Builder\MegaplanCommandBuilderAbstract;
 use rollun\api\megaplan\DataStore\Contractors;
 use rollun\api\megaplan\DataStore\Deals;
 use rollun\api\megaplan\DataStore\Factory\MegaplanAbstractFactory;
+use rollun\api\megaplan\Factory\MegaplanCallbackAbstractFactory;
 use rollun\api\megaplan\Factory\MegaplanClientFactory;
 use rollun\api\megaplan\Factory\MegaplanProcessAbstractFactory;
+use rollun\api\megaplan\Factory\MegaplanWebhookMiddlewareFactory;
+use rollun\api\megaplan\Middleware\MegaplanWebhookMiddleware;
 use rollun\api\megaplan\Serializer\MegaplanSerializer;
 use rollun\api\megaplan\Serializer\MegaplanSerializerOptions;
+use rollun\callback\Middleware\CallablePluginManagerFactory;
+use rollun\callback\Middleware\WebhookMiddlewareFactory;
 use rollun\utils\Factory\AbstractServiceAbstractFactory;
 
 class ConfigProvider
@@ -33,7 +38,44 @@ class ConfigProvider
         return [
             'dependencies' => $this->getDependencies(),
             'dataStore' => $this->getDataStore(),
+            MegaplanClientFactory::KEY => $this->getMegaplan(),
             AbstractServiceAbstractFactory::KEY => $this->getAbstractServiceAbstractFactory(),
+            CallablePluginManagerFactory::KEY_INTERRUPTERS => $this->getInterrupters(),
+        ];
+    }
+
+    protected function getMegaplan()
+    {
+        return [
+            MegaplanClient::class => [
+                'api_url' => getenv('MP_URL'),
+                'login' => getenv('MP_USER'),
+                'password' => getenv('MP_PASS'),
+                'timeout' => 60,
+                MegaplanClientFactory::KEY_STORAGE => [
+                    'adapter' => [
+                        'name' => 'filesystem',
+                        'options' => [
+                            'ttl' => 3600,
+                            'cacheDir' => realpath('./data') . '/cache'
+                        ]
+                    ],
+                    'plugins' => [
+                        'exception_handler' => [
+                            'throw_exceptions' => false
+                        ],
+                    ],
+                ]
+            ],
+        ];
+    }
+
+    protected function getInterrupters()
+    {
+        return [
+            'abstract_factories' => [
+                MegaplanCallbackAbstractFactory::class,
+            ]
         ];
     }
 
@@ -103,11 +145,13 @@ class ConfigProvider
             ],
             'factories' => [
                 MegaplanClient::class => MegaplanClientFactory::class,
+                MegaplanWebhookMiddleware::class => MegaplanWebhookMiddlewareFactory::class,
             ],
             'abstract_factories' => [
                 MegaplanAbstractFactory::class,
                 AbstractServiceAbstractFactory::class,
                 MegaplanProcessAbstractFactory::class,
+                MegaplanCallbackAbstractFactory::class,
             ],
             'aliases' => [],
         ];
