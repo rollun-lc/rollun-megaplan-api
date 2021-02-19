@@ -6,7 +6,7 @@ namespace rollun\api\megaplan\Entity;
 
 use rollun\utils\Json\Exception;
 
-class EntitySimple extends DealAbstract
+class EntitySimple extends EntityAbstract
 {
     protected const CONSTANT_FIELDS = [
         'Id',
@@ -135,12 +135,11 @@ class EntitySimple extends DealAbstract
 
     /**
      * @param bool $originKeys
-     * @param bool $onlyChanged
      * @return array
      *
      * @todo Удалить параметр $onlyChanged
      */
-    public function toArray($onlyChanged = false, $originKeys = false): array
+    public function toArray($originKeys = false): array
     {
         $deal = [
             'Id' => $this->params['Id']
@@ -157,9 +156,9 @@ class EntitySimple extends DealAbstract
             }
         }
 
-        if ($onlyChanged) {
+        /*if ($onlyChanged) {
             return $deal;
-        }
+        }*/
 
         foreach ($this->params as $field => $value) {
             if (!isset($deal[$field])) {

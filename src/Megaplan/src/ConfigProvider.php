@@ -145,7 +145,6 @@ class ConfigProvider
             ],
             'factories' => [
                 MegaplanClient::class => MegaplanClientFactory::class,
-                MegaplanWebhookMiddleware::class => MegaplanWebhookMiddlewareFactory::class,
             ],
             'abstract_factories' => [
                 MegaplanAbstractFactory::class,
