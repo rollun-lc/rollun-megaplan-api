@@ -18,9 +18,11 @@ class EntityFactorySimple extends EntityFactoryAbstract
 {
     protected $dealClass = EntitySimple::class;
 
-    public function __construct($dealClass)
+    public function __construct($dealClass = null)
     {
-        $this->dealClass = $dealClass;
+        if ($dealClass) {
+            $this->dealClass = $dealClass;
+        }
     }
 
     public function createConcrete($data): EntityInterface
