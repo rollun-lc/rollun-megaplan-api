@@ -43,8 +43,8 @@ class MegaplanCallbackAbstractFactory extends CallbackAbstractFactoryAbstract
             if ($container->has($serviceConfig[self::KEY_ENTITY_FACTORY])) {
                 $factory = $container->get($serviceConfig[self::KEY_ENTITY_FACTORY]);
             } else {
-                $className = $serviceConfig[self::KEY_ENTITY_CLASS] ?? null;
-                $factory = new $serviceConfig[self::KEY_ENTITY_FACTORY]($className);
+                $entityClass = $serviceConfig[self::KEY_ENTITY_CLASS] ?? null;
+                $factory = new $serviceConfig[self::KEY_ENTITY_FACTORY]($entityClass);
             }
             //$value = $factoryConfig($container, $requestedName, $options);
         } elseif (isset($serviceConfig[self::KEY_ENTITY_CLASS])) {

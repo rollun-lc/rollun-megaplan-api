@@ -1,103 +1,24 @@
 <?php
 
 
-namespace rollun\test\api\megaplan\Callback\Interrupter;
+namespace Megaplan\Factory;
 
-use Jaeger\Tracer\Tracer;
+
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
-use rollun\api\megaplan\Callback\Interrupter\MegaplanProcess;
-use rollun\api\megaplan\Callback\MegaplanCallback;
-use rollun\api\megaplan\Deals\DealSimple;
+use rollun\api\megaplan\Entity\EntitySimple;
 use rollun\api\megaplan\Factory\EntityFactorySimple;
-use rollun\api\megaplan\Factory\MegaplanCallbackAbstractFactory;
-use rollun\api\megaplan\Factory\MegaplanProcessAbstractFactory;
-use rollun\callback\Callback\Interrupter\Factory\InterruptAbstractFactoryAbstract;
-use rollun\callback\Callback\Interrupter\Factory\ProcessAbstractFactory;
-use rollun\dic\InsideConstruct;
-use rollun\logger\LifeCycleToken;
-use rollun\utils\Factory\AbstractServiceAbstractFactory;
-use Zend\ServiceManager\ServiceManager;
 
-class MegaplanProcessTest extends TestCase
+class EntityFactorySimpleTest extends TestCase
 {
-    protected $container;
-
-    protected $testFile = 'data/deal.json';
-
-    protected function setUp()
+    public function testCreateSimpleEntity()
     {
-        global $container;
-
-        $this->container = $container;
-    }
-
-    protected function tearDown()
-    {
-        InsideConstruct::setContainer($this->container);
-
-        unlink($this->testFile);
-    }
-
-    protected function makeContrainer($mergeConfig = [], $callback = null)
-    {
-        $config = $this->container->get('config');
-
-        if ($mergeConfig) {
-            $config = array_merge_recursive($config, $mergeConfig);
-        }
-
-        $container = new ServiceManager();
-        $container->setService('config', $config);
-        $container->configure($config['dependencies']);
-
-        $logger = $this->createMock(LoggerInterface::class);
-        $container->setService(LoggerInterface::class, $logger);
-        $lifeCycleToken = $this->container->get(LifeCycleToken::class);
-        $container->setService(LifeCycleToken::class, $lifeCycleToken);
-        $tracer = $this->createMock(Tracer::class);
-        $container->setService(Tracer::class, $tracer);
-
-        InsideConstruct::setContainer($container);
-
-        if ($callback) {
-            $callback($container);
-        }
-
-        return $container;
-    }
-
-    public function testCreateDeal()
-    {
-        $testCallback = new TestCallback();
-
-        $container = $this->makeContrainer([
-            AbstractServiceAbstractFactory::KEY => [
-                TestCallback::class => TestCallback::class
-            ],
-            MegaplanCallbackAbstractFactory::KEY => [
-                'TestMegaplanCallback' => [
-                    MegaplanCallbackAbstractFactory::KEY_CLASS => MegaplanCallback::class,
-                    MegaplanCallbackAbstractFactory::KEY_CALLBACK => TestCallback::class,
-                    MegaplanCallbackAbstractFactory::KEY_ENTITY_FACTORY => EntityFactorySimple::class,
-                ],
-            ],
-        ]);
-
-        $container->setService(TestCallback::class, $testCallback);
-
-        $process = $container->get('TestMegaplanCallback');
-
+        $factory = new EntityFactorySimple();
         $data = $this->getTestData();
+        $entity = $factory->createConcrete($data);
 
-        $process($data);
-
-        sleep(2);
-
-        $json = file_get_contents($this->testFile);
-        $deal = json_decode($json, JSON_OBJECT_AS_ARRAY);
-
-        $this->assertEquals($data['data']['deal'], $deal);
+        $this->assertInstanceOf(EntitySimple::class, $entity);
+        $this->assertEquals(10488, $entity->get('Id'));
+        $this->assertEquals('Amazon Shoptimistic', $entity['MpName']);
     }
 
     protected function getTestData()

@@ -6,7 +6,7 @@ namespace rollun\api\megaplan\Entity;
 
 use rollun\utils\Json\Exception;
 
-class EntitySimple extends EntityAbstract
+class EntitySimple extends EntityAbstract implements \ArrayAccess
 {
     protected const CONSTANT_FIELDS = [
         'Id',
