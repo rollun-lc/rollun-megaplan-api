@@ -139,7 +139,7 @@ class EntitySimple extends EntityAbstract
      *
      * @todo Удалить параметр $onlyChanged
      */
-    public function toArray($originKeys = false): array
+    public function toArray(bool $originKeys = false): array
     {
         $deal = [
             'Id' => $this->params['Id']
@@ -238,5 +238,10 @@ class EntitySimple extends EntityAbstract
         if (!$this->fieldMapper) {
             $this->fieldMapper = $this->defaultFieldMapper();
         }
+    }
+
+    public function getChanges(bool $originKeys = false): array
+    {
+        // TODO: Implement getChanges() method.
     }
 }

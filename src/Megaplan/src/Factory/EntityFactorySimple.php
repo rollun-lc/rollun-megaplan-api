@@ -4,9 +4,9 @@
 namespace rollun\api\megaplan\Factory;
 
 
-use rollun\api\megaplan\Deals\DealAbstract;
-use rollun\api\megaplan\Deals\DealInterface;
-use rollun\api\megaplan\Deals\DealSimple;
+use rollun\api\megaplan\Entity\EntityAbstract;
+use rollun\api\megaplan\Entity\EntityInterface;
+use rollun\api\megaplan\Entity\EntitySimple;
 
 /**
  * Class DealFactoryAbstract
@@ -14,16 +14,16 @@ use rollun\api\megaplan\Deals\DealSimple;
  *
  * @todo
  */
-class EntityFactorySimple extends DealFactoryAbstract
+class EntityFactorySimple extends EntityFactoryAbstract
 {
-    protected $dealClass = DealSimple::class;
+    protected $dealClass = EntitySimple::class;
 
     public function __construct($dealClass)
     {
         $this->dealClass = $dealClass;
     }
 
-    public function createDeal($data): DealInterface
+    public function createConcrete($data): EntityInterface
     {
         $deal = $data['data']['deal'];
 
