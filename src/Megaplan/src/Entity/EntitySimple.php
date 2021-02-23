@@ -240,8 +240,29 @@ class EntitySimple extends EntityAbstract implements \ArrayAccess
         }
     }
 
+    /**
+     * @param bool $originKeys
+     * @return array
+     *
+     * @todo
+     */
     public function getChanges(bool $originKeys = false): array
     {
-        // TODO: Implement getChanges() method.
+        $deal = [
+            'Id' => $this->params['Id']
+        ];
+
+        $fields = array_keys($this->params);
+
+        foreach ($this->changedParams as $field => $value) {
+            if (!in_array($field, $fields, true)) {
+                $field = sprintf('Category%sCustomField%s', $this->extraFieldId, $field);
+                $deal['Model'][$field] = $value;
+            } else {
+                $deal[$field] = $value;
+            }
+        }
+
+        return $deal;
     }
 }
