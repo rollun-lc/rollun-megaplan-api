@@ -22,6 +22,8 @@ class MegaplanClientFactory implements FactoryInterface
     const KEY_SERIALIZER = "serializer";
     const KEY_STORAGE = 'storage';
 
+    const KEY_DEBUG_MODE = 'debug_mode';
+
     /**
      * {@inheritdoc}
      *
@@ -47,10 +49,13 @@ class MegaplanClientFactory implements FactoryInterface
             isset($serviceConfig[static::KEY_API_LOGIN]) &&
             isset($serviceConfig[static::KEY_API_PASSWORD])
         )) {
-            throw new ServiceNotFoundException(
-                sprintf("Can't create a service because there is no required data - \"%s\", \"%s\", \"%s\" - in the config.",
-                    static::KEY_API_URL, static::KEY_API_LOGIN, static::KEY_API_PASSWORD)
+            $message = sprintf(
+                "Can't create a service because there is no required data - \"%s\", \"%s\", \"%s\" - in the config.",
+                static::KEY_API_URL,
+                static::KEY_API_LOGIN,
+                static::KEY_API_PASSWORD
             );
+            throw new ServiceNotFoundException($message);
         }
 
         $timeout = $serviceConfig[static::KEY_API_TIMEOUT] ?? 10;
@@ -64,7 +69,9 @@ class MegaplanClientFactory implements FactoryInterface
             $storage = StorageFactory::factory($storageConfig);
         }
 
-        $instance = new MegaplanClient($client, $serializer, $storage);
+        $debugMode = $serviceConfig[static::KEY_DEBUG_MODE] ?? false;
+
+        $instance = new MegaplanClient($client, $serializer, $storage, $debugMode);
 
         // If both login and password are empty skip an authorization
         if (!(empty($serviceConfig[static::KEY_API_LOGIN]) && empty($serviceConfig[static::KEY_API_PASSWORD]))) {

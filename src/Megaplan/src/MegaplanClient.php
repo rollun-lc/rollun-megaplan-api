@@ -43,6 +43,8 @@ class MegaplanClient
      */
     private $storage;
 
+    protected $debugMode;
+
     private const STORAGE_KEY = 'megaplan_auth';
 
     /**
@@ -56,12 +58,14 @@ class MegaplanClient
         Client $client,
         AdapterInterface $serializer,
         ?StorageInterface $storage,
-        LoggerInterface $logger = null
+        LoggerInterface $logger = null,
+        bool $debugMode = false
     ) {
         InsideConstruct::init(['logger' => LoggerInterface::class]);
         $this->client = $client;
         $this->serializer = $serializer;
         $this->storage = $storage;
+        $this->debugMode = $debugMode;
     }
 
     public function __sleep()
@@ -88,6 +92,13 @@ class MegaplanClient
      */
     public function get($uri, array $params = null, $entityType = "")
     {
+        if ($this->debugMode) {
+            $this->logger->debug('Send request to megaplan', [
+                'uri' => $uri,
+                'params' => $params,
+            ]);
+        }
+
         try {
             if (!empty($entityType)) {
                 $this->setEntityType($entityType);
@@ -97,6 +108,12 @@ class MegaplanClient
                 $response = $this->sendPostRequest($uri, $params);
             } else {
                 $response = $this->sendGetRequest($uri, $params);
+            }
+
+            if ($this->debugMode) {
+                $this->logger->debug('Got response from Megaplan', [
+                    'response' => $response,
+                ]);
             }
 
             // Fetch data from response
