@@ -58,8 +58,8 @@ class MegaplanClient
         Client $client,
         AdapterInterface $serializer,
         ?StorageInterface $storage,
-        LoggerInterface $logger = null,
-        bool $debugMode = false
+        bool $debugMode = false,
+        LoggerInterface $logger = null
     ) {
         InsideConstruct::init(['logger' => LoggerInterface::class]);
         $this->client = $client;
