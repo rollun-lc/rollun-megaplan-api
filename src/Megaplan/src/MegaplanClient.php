@@ -73,7 +73,8 @@ class MegaplanClient
         return [
             'client',
             'serializer',
-            'storage'
+            'storage',
+            'debugMode',
         ];
     }
 
