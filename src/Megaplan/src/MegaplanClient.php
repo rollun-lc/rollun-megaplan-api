@@ -120,7 +120,7 @@ class MegaplanClient
             // Fetch data from response
             return $this->serializer->unserialize($response);
         } catch (RequestGetLimitException $exception) {
-            $this->logger->alert('Request GET limit exceeded after 4 attempts', [
+            $this->logger->alert('GET request limit exceeded after 4 attempts', [
                 'info' => $this->client->getInfo(),
                 'error' => $this->client->getError(),
                 'uri' => $uri,
@@ -128,7 +128,7 @@ class MegaplanClient
                 'response' => $response ?? null,
             ]);
         } catch (RequestPostLimitException $exception) {
-            $this->logger->alert('Request POST limit exceeded without retrying', [
+            $this->logger->alert('POST request limit exceeded', [
                 'info' => $this->client->getInfo(),
                 'error' => $this->client->getError(),
                 'uri' => $uri,
@@ -213,7 +213,7 @@ class MegaplanClient
             ]);
 
             if ($this->client->getInfo('http_code') === 429) {
-                $this->logger->error('Request GET limit exceeded. Retry GET request after 15 seconds');
+                $this->logger->warning('Request GET limit exceeded. Retry GET request after 15 seconds');
                 throw new RequestGetLimitException();
             }
 
