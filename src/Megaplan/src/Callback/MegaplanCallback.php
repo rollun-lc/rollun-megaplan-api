@@ -7,6 +7,7 @@ namespace rollun\api\megaplan\Callback;
 use Psr\Log\LoggerInterface;
 use rollun\api\megaplan\Factory\EntityFactoryAbstract;
 use rollun\api\megaplan\MegaplanClient;
+use rollun\dic\InsideConstruct;
 
 class MegaplanCallback
 {
@@ -35,5 +36,20 @@ class MegaplanCallback
         $entity = $this->factory->createInstance($data);
 
         ($this->callback)($entity);
+    }
+
+    public function __sleep()
+    {
+        return [
+            'callback',
+            'factory'
+        ];
+    }
+
+    public function __wakeup()
+    {
+        InsideConstruct::initWakeup([
+            'logger' => LoggerInterface::class,
+        ]);
     }
 }
