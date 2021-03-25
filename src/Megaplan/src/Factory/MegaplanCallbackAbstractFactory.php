@@ -5,6 +5,7 @@ namespace rollun\api\megaplan\Factory;
 
 
 use Interop\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use rollun\api\megaplan\Callback\MegaplanCallback;
 use rollun\api\megaplan\MegaplanClient;
 use rollun\callback\Callback\Factory\CallbackAbstractFactoryAbstract;
@@ -51,7 +52,9 @@ class MegaplanCallbackAbstractFactory extends CallbackAbstractFactoryAbstract
             $factory = new EntityFactorySimple($serviceConfig[self::KEY_ENTITY_CLASS]);
         }
 
-        $instance = new $className($callback, $factory);
+        $logger = $container->get(LoggerInterface::class);
+
+        $instance = new $className($callback, $factory, $logger);
 
         return $instance;
     }
