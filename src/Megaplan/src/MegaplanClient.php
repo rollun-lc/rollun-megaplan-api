@@ -41,8 +41,16 @@ class MegaplanClient
     /**
      * @var StorageInterface
      */
-    private $storage;
+    private $authCache;
 
+    /**
+     * @var StorageInterface
+     */
+    protected $savingCache;
+
+    /**
+     * @var bool
+     */
     protected $debugMode;
 
     private const STORAGE_KEY = 'megaplan_auth';
@@ -51,20 +59,23 @@ class MegaplanClient
      * MegaplanClient constructor.
      * @param Client $client
      * @param AdapterInterface $serializer
-     * @param StorageInterface $storage
+     * @param StorageInterface $authCache
+     * @param StorageInterface $savingCache
      * @throws \ReflectionException
      */
     public function __construct(
         Client $client,
         AdapterInterface $serializer,
-        ?StorageInterface $storage,
+        ?StorageInterface $authCache,
+        ?StorageInterface $savingCache,
         bool $debugMode = false,
         LoggerInterface $logger = null
     ) {
         InsideConstruct::init(['logger' => LoggerInterface::class]);
         $this->client = $client;
         $this->serializer = $serializer;
-        $this->storage = $storage;
+        $this->authCache = $authCache;
+        $this->savingCache = $savingCache;
         $this->debugMode = $debugMode;
     }
 
@@ -73,7 +84,8 @@ class MegaplanClient
         return [
             'client',
             'serializer',
-            'storage',
+            'authCache',
+            'savingCache',
             'debugMode',
         ];
     }
@@ -168,27 +180,65 @@ class MegaplanClient
      */
     protected function sendPostRequest($uri, array $params = null)
     {
-        $response = $this->client->post($uri, $params);
-
-        $this->logger->notice('METRICS_COUNTER', [
-            PrometheusWriter::METRIC_ID => 'megaplan_requests',
-            PrometheusWriter::VALUE => 1
-        ]);
-
-        if ($this->client->getInfo('http_code') === 429) {
-            //$this->logger->error('Request limit exceeded. No retry POST request');
-            throw new RequestPostLimitException();
+        if ($this->checkEntitySaving($uri, $params)) {
+            $this->saveEntitySaving($uri, $params);
         }
 
-        if ($this->client->getInfo('http_code') == 502) {
-            throw new ClientException('Bad gateway');
-        }
+        try {
+            $response = $this->client->post($uri, $params);
 
-        if ($this->client->getError() !== '' && $this->client->getError() !== null) {
-            throw new ClientException('Curl error with message: ' . $this->client->getError());
+            $this->logger->notice('METRICS_COUNTER', [
+                PrometheusWriter::METRIC_ID => 'megaplan_requests',
+                PrometheusWriter::VALUE => 1
+            ]);
+
+            if ($this->client->getInfo('http_code') === 429) {
+                //$this->logger->error('Request limit exceeded. No retry POST request');
+                throw new RequestPostLimitException();
+            }
+
+            if ($this->client->getInfo('http_code') == 502) {
+                throw new ClientException('Bad gateway');
+            }
+
+            if ($this->client->getError() !== '' && $this->client->getError() !== null) {
+                throw new ClientException('Curl error with message: ' . $this->client->getError());
+            }
+        } finally {
+            $this->deleteEntitySaving($uri, $params);
         }
 
         return $response;
+    }
+
+    protected function checkEntitySaving($uri, $params)
+    {
+        return self::callAttemptsCallable(4, 15000000, function() use ($uri, $params) {
+            $key = $this->getEntityStorageKey($uri, $params);
+            if ($this->savingCache->hasItem($key)) {
+                throw new \Exception('Another entity is saving in this moment');
+            }
+
+            return true;
+        });
+    }
+
+    protected function saveEntitySaving($uri, $params)
+    {
+        $key = $this->getEntityStorageKey($uri, $params);
+        $this->savingCache->setItem($key, time());
+    }
+
+    protected function deleteEntitySaving($uri, $params)
+    {
+        $key = $this->getEntityStorageKey($uri, $params);
+        $this->savingCache->removeItem($key);
+    }
+
+    protected function getEntityStorageKey($uri, $params)
+    {
+        $id = $params['Id'] ?? null;
+        return md5($uri . '-' . $id);
     }
 
     /**
@@ -248,14 +298,14 @@ class MegaplanClient
      */
     public function auth($login, $password)
     {
-        $auth = $this->storage ? json_decode($this->storage->getItem(self::STORAGE_KEY)) : null;
+        $auth = $this->authCache ? json_decode($this->authCache->getItem(self::STORAGE_KEY)) : null;
         if (!empty($auth) && isset($auth->AccessId) && isset($auth->SecretKey)) {
             $this->client->setAccessId($auth->AccessId);
             $this->client->setSecretKey($auth->SecretKey);
         } else {
             $this->client->auth($login, $password);
-            if ($this->storage and $result = $this->client->getResult() and !empty($result->data)) {
-                $this->storage->setItem(self::STORAGE_KEY, json_encode($result->data));
+            if ($this->authCache and $result = $this->client->getResult() and !empty($result->data)) {
+                $this->authCache->setItem(self::STORAGE_KEY, json_encode($result->data));
             }
         }
     }

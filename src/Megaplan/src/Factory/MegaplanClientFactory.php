@@ -20,7 +20,8 @@ class MegaplanClientFactory implements FactoryInterface
     const KEY_API_TIMEOUT = 'timeout';
 
     const KEY_SERIALIZER = "serializer";
-    const KEY_STORAGE = 'storage';
+    const KEY_AUTH_CACHE = 'auth_cache';
+    const KEY_SAVING_CACHE = 'saving_cache';
 
     const KEY_DEBUG_MODE = 'debug_mode';
 
@@ -63,15 +64,21 @@ class MegaplanClientFactory implements FactoryInterface
 
         $serializer = $container->get($serviceConfig[static::KEY_SERIALIZER] ?? MegaplanSerializer::class);
 
-        $storage = null;
-        $storageConfig =$serviceConfig[static::KEY_STORAGE] ?? null;
-        if (!empty($storageConfig) && (is_array($storageConfig) || $storageConfig instanceof \Traversable)) {
-            $storage = StorageFactory::factory($storageConfig);
+        $authCache = $savingCache = null;
+
+        $authCacheConfig = $serviceConfig[static::KEY_AUTH_CACHE] ?? null;
+        if (is_array($authCacheConfig) || $authCacheConfig instanceof \Traversable) {
+            $authCache = StorageFactory::factory($authCacheConfig);
+        }
+
+        $savingCacheConfig = $serviceConfig[static::KEY_SAVING_CACHE] ?? null;
+        if (is_array($savingCacheConfig) || $savingCacheConfig instanceof \Traversable) {
+            $savingCache = StorageFactory::factory($savingCacheConfig);
         }
 
         $debugMode = $serviceConfig[static::KEY_DEBUG_MODE] ?? false;
 
-        $instance = new MegaplanClient($client, $serializer, $storage, $debugMode);
+        $instance = new MegaplanClient($client, $serializer, $authCache, $savingCache, $debugMode);
 
         // If both login and password are empty skip an authorization
         if (!(empty($serviceConfig[static::KEY_API_LOGIN]) && empty($serviceConfig[static::KEY_API_PASSWORD]))) {

@@ -52,11 +52,25 @@ class ConfigProvider
                 'login' => getenv('MP_USER'),
                 'password' => getenv('MP_PASS'),
                 'timeout' => 60,
-                MegaplanClientFactory::KEY_STORAGE => [
+                MegaplanClientFactory::KEY_AUTH_CACHE => [
                     'adapter' => [
                         'name' => 'filesystem',
                         'options' => [
                             'ttl' => 3600,
+                            'cacheDir' => realpath('./data') . '/cache'
+                        ]
+                    ],
+                    'plugins' => [
+                        'exception_handler' => [
+                            'throw_exceptions' => false
+                        ],
+                    ],
+                ],
+                MegaplanClientFactory::KEY_SAVING_CACHE => [
+                    'adapter' => [
+                        'name' => 'filesystem',
+                        'options' => [
+                            'ttl' => 300,
                             'cacheDir' => realpath('./data') . '/cache'
                         ]
                     ],
