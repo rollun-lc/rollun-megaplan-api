@@ -189,7 +189,9 @@ class MegaplanClient
 
             $this->logger->notice('METRICS_COUNTER', [
                 PrometheusWriter::METRIC_ID => 'megaplan_requests',
-                PrometheusWriter::VALUE => 1
+                PrometheusWriter::VALUE => 1,
+                'service' => 'megaplan',
+                'action' => $uri
             ]);
 
             if ($this->client->getInfo('http_code') === 429) {
@@ -259,7 +261,9 @@ class MegaplanClient
 
             $this->logger->notice('METRICS_COUNTER', [
                 PrometheusWriter::METRIC_ID => 'megaplan_requests',
-                PrometheusWriter::VALUE => 1
+                PrometheusWriter::VALUE => 1,
+                'service' => 'megaplan',
+                'action' => $uri
             ]);
 
             if ($this->client->getInfo('http_code') === 429) {
