@@ -70,6 +70,7 @@ class RequestEntitiesMegaplanCommand extends AbstractMegaplanCommand
         $data = [];
         $requestCount = 0;
         $limit = $this->requestParams["Limit"];
+        $this->requestParams['Offset'] = $this->requestParams['Offset'] ?? 0;
         $this->requestParams["Limit"] = $limit > static::MAX_LIMIT ? static::MAX_LIMIT : $limit;
         do {
             $partData = $this->megaplanClient->get($this->uri, $this->getRequestParams());
@@ -83,8 +84,9 @@ class RequestEntitiesMegaplanCommand extends AbstractMegaplanCommand
             // delay
             usleep($this->getRequestInterval());
             // get the next entities
-            $offset = $limit - count($data);
-            $this->requestParams['Offset'] += ($offset > static::MAX_LIMIT ? static::MAX_LIMIT : $offset);
+            //$offset = $limit - count($data);
+            //$this->requestParams['Offset'] += ($offset > static::MAX_LIMIT ? static::MAX_LIMIT : $offset);
+            $this->requestParams['Offset'] += $this->requestParams["Limit"];
             // do this while the last part of entities is less than 100 - in this case we reach end of the entities list
             //count($data) < ($limit)$this->requestParams['Limit']
             //count($data) == $this->requestParams['Offset']
