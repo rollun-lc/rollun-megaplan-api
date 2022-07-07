@@ -4,6 +4,7 @@
 namespace rollun\api\megaplan;
 
 
+use Laminas\Cache\Storage\Plugin\Serializer;
 use Psr\Log\LoggerInterface;
 use rollun\api\megaplan\Callback\ResetCounterCallback;
 use rollun\api\megaplan\Command\Builder\CommandBuilderPipe;
@@ -53,32 +54,18 @@ class ConfigProvider
                 'password' => getenv('MP_PASS'),
                 'timeout' => 60,
                 MegaplanClientFactory::KEY_AUTH_CACHE => [
-                    'adapter' => [
-                        'name' => 'filesystem',
-                        'options' => [
-                            'ttl' => 3600,
-                            'cacheDir' => realpath('./data') . '/cache'
-                        ]
-                    ],
+                    'adapter' => 'filesystem',
+                    'options' => ['ttl' => 3600],
                     'plugins' => [
-                        'exception_handler' => [
-                            'throw_exceptions' => false
-                        ],
-                    ],
+                        ['name' => Serializer::class]
+                    ]
                 ],
                 MegaplanClientFactory::KEY_SAVING_CACHE => [
-                    'adapter' => [
-                        'name' => 'filesystem',
-                        'options' => [
-                            'ttl' => 300,
-                            'cacheDir' => realpath('./data') . '/cache'
-                        ]
-                    ],
+                    'adapter' => 'filesystem',
+                    'options' => ['ttl' => 3600],
                     'plugins' => [
-                        'exception_handler' => [
-                            'throw_exceptions' => false
-                        ],
-                    ],
+                        ['name' => Serializer::class]
+                    ]
                 ]
             ],
         ];

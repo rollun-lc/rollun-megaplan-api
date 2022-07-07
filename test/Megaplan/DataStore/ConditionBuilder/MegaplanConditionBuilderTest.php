@@ -14,7 +14,7 @@ class MegaplanConditionBuilderTest extends TestCase
     /** @var MegaplanConditionBuilder */
     protected $conditionBuilder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->conditionBuilder = new MegaplanConditionBuilder();
     }

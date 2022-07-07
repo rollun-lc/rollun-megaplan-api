@@ -1,8 +1,8 @@
 <?php
 
-use Zend\ConfigAggregator\ArrayProvider;
-use Zend\ConfigAggregator\ConfigAggregator;
-use Zend\ConfigAggregator\PhpFileProvider;
+use Laminas\ConfigAggregator\ArrayProvider;
+use Laminas\ConfigAggregator\ConfigAggregator;
+use Laminas\ConfigAggregator\PhpFileProvider;
 
 // To enable or disable caching, set the `ConfigAggregator::ENABLE_CACHE` boolean in
 // `config/autoload/local.php`.
@@ -11,9 +11,9 @@ $cacheConfig = [
 ];
 
 $aggregator = new ConfigAggregator([
-    \Zend\Serializer\ConfigProvider::class,
-    \Zend\Db\ConfigProvider::class,
-    \Zend\Validator\ConfigProvider::class,
+    \Laminas\Serializer\ConfigProvider::class,
+    \Laminas\Db\ConfigProvider::class,
+    \Laminas\Validator\ConfigProvider::class,
     \rollun\callback\ConfigProvider::class,
     \rollun\api\megaplan\ConfigProvider::class,
     \rollun\tracer\ConfigProvider::class,

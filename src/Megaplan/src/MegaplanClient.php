@@ -14,8 +14,8 @@ use rollun\api\megaplan\Serializer\MegaplanSerializerOptionsInterface;
 use rollun\dic\InsideConstruct;
 use rollun\logger\Writer\PrometheusWriter;
 use rollun\utils\CallAttemptsTrait;
-use Zend\Cache\Storage\StorageInterface;
-use Zend\Serializer\Adapter\AdapterInterface;
+use Laminas\Cache\Storage\StorageInterface;
+use Laminas\Serializer\Adapter\AdapterInterface;
 
 /**
  * Class MegaplanClient

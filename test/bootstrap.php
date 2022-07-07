@@ -11,7 +11,7 @@ if ($appEnv != 'dev') {
 // Setup autoloading
 require 'vendor/autoload.php';
 require_once 'config/env_configurator.php';
-/** @var \Zend\ServiceManager\ServiceManager $container */
+/** @var \Laminas\ServiceManager\ServiceManager $container */
 $container = require 'config/container.php';
 \rollun\dic\InsideConstruct::setContainer($container);
 $lifeCycleToken = \rollun\logger\LifeCycleToken::generateToken();

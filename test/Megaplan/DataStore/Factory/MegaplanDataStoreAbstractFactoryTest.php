@@ -6,8 +6,8 @@ use PHPUnit\Framework\TestCase;
 use rollun\api\megaplan\DataStore\Factory\MegaplanAbstractFactory;
 use rollun\datastore\DataStore\DataStoreAbstract;
 use rollun\test\api\megaplan\DataStore\ContainerMockTrait;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
-use Zend\ServiceManager\Exception\InvalidArgumentException;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Laminas\ServiceManager\Exception\InvalidArgumentException;
 
 class MegaplanDataStoreAbstractFactoryTest extends TestCase
 {

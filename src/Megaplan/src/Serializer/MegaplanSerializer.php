@@ -5,7 +5,7 @@ namespace rollun\api\megaplan\Serializer;
 use rollun\api\megaplan\Exception\InvalidResponseException;
 use rollun\dic\InsideConstruct;
 use RuntimeException;
-use Zend\Serializer\Adapter\Json;
+use Laminas\Serializer\Adapter\Json;
 
 /**
  * Class MegaplanSerializer
@@ -56,7 +56,7 @@ class MegaplanSerializer extends Json
      *         )
      * )
      * Surely the data in this format is not writable to DataStore.
-     * So this serializer based on Zend\Serializer\Adapter\Json just extract the raw data from scope.
+     * So this serializer based on Laminas\Serializer\Adapter\Json just extract the raw data from scope.
      * And then create outcoming array the following view:
      * Array
      * (

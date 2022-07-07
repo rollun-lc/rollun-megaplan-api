@@ -2,8 +2,8 @@
 
 namespace rollun\api\megaplan\Serializer;
 
-use Zend\Serializer\Adapter\JsonOptions;
-use Zend\Serializer\Exception\InvalidArgumentException;
+use Laminas\Serializer\Adapter\JsonOptions;
+use Laminas\Serializer\Exception\InvalidArgumentException;
 
 class MegaplanSerializerOptions extends JsonOptions implements MegaplanSerializerOptionsInterface
 {

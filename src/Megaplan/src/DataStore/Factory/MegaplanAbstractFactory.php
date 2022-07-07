@@ -7,9 +7,9 @@ use rollun\api\megaplan\DataStore\AbstractMegaplanEntity;
 use rollun\datastore\DataStore\DataStoreException;
 use rollun\datastore\DataStore\Factory\DataStoreAbstractFactory;
 use rollun\api\megaplan\DataStore\ARMegaplanDataStore;
-use Zend\ServiceManager\Exception\InvalidArgumentException;
-use Zend\ServiceManager\Exception\ServiceNotCreatedException;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
+use Laminas\ServiceManager\Exception\InvalidArgumentException;
+use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 
 class MegaplanAbstractFactory extends DataStoreAbstractFactory
 {

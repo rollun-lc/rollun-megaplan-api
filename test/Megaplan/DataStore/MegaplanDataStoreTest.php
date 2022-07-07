@@ -3,8 +3,8 @@
 namespace rollun\test\api\megaplan\DataStore;
 
 use PHPUnit\Framework\TestCase;
-use rollun\api\megaplan\Entity\Deal\Deal;
-use rollun\api\megaplan\Entity\Deal\Deals;
+use Psr\Container\ContainerInterface;
+use rollun\api\megaplan\DataStore\Deals;
 
 class MegaplanDataStoreTest extends TestCase
 {
@@ -14,7 +14,7 @@ class MegaplanDataStoreTest extends TestCase
     {
         $megaplanDataStore = $this->getContainerMock()->get($this->serviceName);
         $this->assertEquals(
-            Deal::class . '::' . 'get', $megaplanDataStore->read(1)
+            Deals::class . '::' . 'get', $megaplanDataStore->read(1)
         );
     }
 

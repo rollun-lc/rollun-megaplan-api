@@ -17,7 +17,7 @@ use rollun\callback\Callback\Interrupter\Factory\ProcessAbstractFactory;
 use rollun\dic\InsideConstruct;
 use rollun\logger\LifeCycleToken;
 use rollun\utils\Factory\AbstractServiceAbstractFactory;
-use Zend\ServiceManager\ServiceManager;
+use Laminas\ServiceManager\ServiceManager;
 
 class MegaplanProcessTest extends TestCase
 {
@@ -25,14 +25,14 @@ class MegaplanProcessTest extends TestCase
 
     protected $testFile = 'data/deal.json';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         global $container;
 
         $this->container = $container;
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         InsideConstruct::setContainer($this->container);
 

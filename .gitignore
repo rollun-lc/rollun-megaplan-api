@@ -2,6 +2,6 @@
 composer.phar
 clover.xml
 coveralls-upload.json
-phpunit.xml
+phpunit.xml.dist
 vendor/
 composer.lock

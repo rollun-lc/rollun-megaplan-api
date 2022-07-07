@@ -16,9 +16,9 @@ class MegaplanSerializerTest extends TestCase
      */
     protected $serializer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->response = file_get_contents(Command::getDataDir() . 'deals.json');
+        $this->response = file_get_contents(Command::getDataDir() . 'deal.json');
         $serializerOptions = new MegaplanSerializerOptions();
         $serializerOptions->setEntity('deals');
         $this->serializer = new MegaplanSerializer($serializerOptions);

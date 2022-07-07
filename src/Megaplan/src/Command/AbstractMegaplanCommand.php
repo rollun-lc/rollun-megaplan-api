@@ -5,7 +5,7 @@ namespace rollun\api\megaplan\Command;
 
 use Megaplan\SimpleClient\Client;
 use rollun\api\megaplan\MegaplanClient;
-use Zend\Serializer\Serializer;
+use Laminas\Serializer\Serializer;
 
 /**
  * Class AbstractMegaplanCommand

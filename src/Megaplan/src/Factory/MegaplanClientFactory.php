@@ -3,11 +3,11 @@
 namespace rollun\api\megaplan\Factory;
 
 use Interop\Container\ContainerInterface;
+use Laminas\Cache\Service\StorageAdapterFactoryInterface;
 use rollun\api\megaplan\MegaplanClient;
 use rollun\api\megaplan\Serializer\MegaplanSerializer;
-use Zend\Cache\StorageFactory;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 use Megaplan\SimpleClient\Client;
 
 class MegaplanClientFactory implements FactoryInterface
@@ -66,14 +66,16 @@ class MegaplanClientFactory implements FactoryInterface
 
         $authCache = $savingCache = null;
 
+        $storageFactory = $container->get(StorageAdapterFactoryInterface::class);
+
         $authCacheConfig = $serviceConfig[static::KEY_AUTH_CACHE] ?? null;
         if (is_array($authCacheConfig) || $authCacheConfig instanceof \Traversable) {
-            $authCache = StorageFactory::factory($authCacheConfig);
+            $authCache = $storageFactory->createFromArrayConfiguration($authCacheConfig);
         }
 
         $savingCacheConfig = $serviceConfig[static::KEY_SAVING_CACHE] ?? null;
         if (is_array($savingCacheConfig) || $savingCacheConfig instanceof \Traversable) {
-            $savingCache = StorageFactory::factory($savingCacheConfig);
+            $savingCache = $storageFactory->createFromArrayConfiguration($savingCacheConfig);
         }
 
         $debugMode = $serviceConfig[static::KEY_DEBUG_MODE] ?? false;
