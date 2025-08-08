@@ -11,11 +11,11 @@
     "php": "^7.1",
     "ext-json": "*",
     "megaplan/simple_client": "^1.0.0",
-    "rollun-com/rollun-datastore": "^6.0",
+    "rollun-com/rollun-datastore": "^6.12",
     "zendframework/zend-serializer": "^2.9",
     "zendframework/zend-servicemanager": "^3.3",
     "zendframework/zend-stdlib": "^3.1",
-    "rollun-com/rollun-logger": "^5.4.1",
+    "rollun-com/rollun-logger": "^6.2",
     "rollun-com/rollun-callback": "^6.0.0"
   },
   "require-dev": {
